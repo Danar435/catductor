@@ -21,22 +21,22 @@ local buttonImages = {
 
     UP =
         gfx.image.new(
-            "images/Arrow-up"
+            "images/arrow-up"
         ),
 
     DOWN =
         gfx.image.new(
-            "images/Arrow-down"
+            "images/arrow-down"
         ),
 
     LEFT =
         gfx.image.new(
-            "images/Arrow-left"
+            "images/arrow-left"
         ),
 
     RIGHT =
         gfx.image.new(
-            "images/Arrow-right"
+            "images/arrow-right"
         )
 }
 
@@ -81,7 +81,7 @@ local function getComboLength()
 
     for _, level in ipairs(difficultyLevels) do
 
-        if wallsCleared >= level.minWalls then
+        if WallsCleared >= level.minWalls then
 
             length =
                 level.comboLength
@@ -97,7 +97,7 @@ end
 
 local function generateCombo()
 
-    currentCombo = {}
+    CurrentCombo = {}
 
     local comboLength =
         getComboLength()
@@ -110,21 +110,21 @@ local function generateCombo()
                 #possibleButtons
             )
 
-        currentCombo[i] =
+        CurrentCombo[i] =
             possibleButtons[randomIndex]
 
     end
 
-    comboProgress = 1
+    ComboProgress = 1
 
-    comboActive = true
+    ComboActive = true
 
 end
 
 -- Reset combo system
 function ComboSystem.resetGame()
 
-    wallsCleared = 0
+    WallsCleared = 0
 
     generateCombo()
 
@@ -204,7 +204,7 @@ end
 
 function ComboSystem.update()
 
-    if not comboActive then
+    if not ComboActive then
         return false
     end
 
@@ -217,21 +217,21 @@ function ComboSystem.update()
 
 
     local expectedButton =
-        currentCombo[comboProgress]
+        CurrentCombo[ComboProgress]
 
     -- CORRECT INPUT
 
     if input == expectedButton then
 
-        comboProgress += 1
+        ComboProgress += 1
 
         -- COMBO COMPLETE
 
-        if comboProgress > #currentCombo then
+        if ComboProgress > #CurrentCombo then
 
-            comboActive = false
+            ComboActive = false
 
-            wallsCleared += 1
+            WallsCleared += 1
 
             return true
         end
@@ -240,7 +240,7 @@ function ComboSystem.update()
 
     else
 
-        comboProgress = 1
+        ComboProgress = 1
 
     end
 
@@ -263,7 +263,7 @@ end
 
 function ComboSystem.draw()
 
-    if not comboActive then
+    if not ComboActive then
         return
     end
 
@@ -271,8 +271,8 @@ function ComboSystem.draw()
     local spacing = 50
 
     local remainingInputs =
-        #currentCombo
-        - comboProgress
+        #CurrentCombo
+        - ComboProgress
         + 1
 
 
@@ -289,10 +289,10 @@ function ComboSystem.draw()
 
     -- Draw buttons that have not already been entered correctly.
 
-    for i = comboProgress, #currentCombo do
+    for i = ComboProgress, #CurrentCombo do
 
         local button =
-            currentCombo[i]
+            CurrentCombo[i]
 
         local image =
             buttonImages[button]
@@ -327,6 +327,6 @@ end
 
 function ComboSystem.getWallsCleared()
 
-    return wallsCleared
+    return WallsCleared
 
 end
