@@ -1,73 +1,220 @@
--- Below is a small example program where you can move a circle
--- around with the crank. You can delete everything in this file,
--- but make sure to add back in a playdate.update function since
--- one is required for every Playdate game!
--- =============================================================
-
--- Importing libraries used for drawCircleAtPoint and crankIndicator
 import "CoreLibs/graphics"
-import "CoreLibs/ui"
+import "CoreLibs/sprites"
 
--- Localizing commonly used globals
-local pd <const> = playdate
-local gfx <const> = playdate.graphics
+local pd = playdate
+local gfx = pd.graphics
 
--- Defining player variables
-local playerSize = 10
-local playerVelocity = 3
-local playerX, playerY = 200, 120
 
--- Drawing player image
-local playerImage = gfx.image.new(32, 32)
-gfx.pushContext(playerImage)
-    -- Draw outline
-    gfx.drawRoundRect(4, 3, 24, 26, 1)
-    -- Draw screen
-    gfx.drawRect(7, 6, 18, 12)
-    -- Draw eyes
-    gfx.drawLine(10, 12, 12, 10)
-    gfx.drawLine(12, 10, 14, 12)
-    gfx.drawLine(17, 12, 19, 10)
-    gfx.drawLine(19, 10, 21, 12)
-    -- Draw crank
-    gfx.drawRect(27, 15, 3, 9)
-    -- Draw A/B buttons
-    gfx.drawCircleInRect(16, 20, 4, 4)
-    gfx.drawCircleInRect(21, 20, 4, 4)
-    -- Draw D-Pad
-    gfx.drawRect(8, 22, 6, 2)
-    gfx.drawRect(10, 20, 2, 6)
-gfx.popContext()
+-- TRAIN
+local trainX = 40
+local trainY = 120
 
--- Defining helper function
-local function ring(value, min, max)
-	if (min > max) then
-		min, max = max, min
-	end
-	return min + (value - min) % (max - min)
+local trainImages = {
+    gfx.image.new("images/train-placeholder-1"),
+    gfx.image.new("images/train-placeholder-2"),
+    gfx.image.new("images/train-placeholder-3"),
+    gfx.image.new("images/train-placeholder-4"),
+    gfx.image.new("images/train-placeholder-5")
+}
+local trainSprite = gfx.sprite.new(trainImages[1])
+
+trainSprite:setCollideRect(10, 4, 125, 125)
+
+trainSprite:moveTo(trainX, trainY)
+trainSprite:add()
+
+
+-- SPEED
+local defaultSpeed = 3
+local trainSpeed = defaultSpeed -- current 'train' speed
+
+local minSpeed = 1
+local maxSpeed = 10
+
+local acceleration = 0.01 -- forward crank increases speed
+local brake = 0.5 -- backward crank decreases speed
+
+local slowdown = 0.05 -- how quickly speed naturally decreases
+
+
+-- COLLISION PENALTY
+local accelerationLockedUntil = 0 -- time when acceleration becomes available again
+local accelerationLockDuration = 2000 -- collision penalty duration (2 seconds)
+
+
+-- OBSTACLE
+local obstacleImage = gfx.image.new("images/obstacle")
+local obstacleSprite = gfx.sprite.new(obstacleImage)
+
+obstacleSprite.collisionResponse = gfx.sprite.kCollisionTypeOverlap
+obstacleSprite:setCollideRect(0, 0, 30, 100)
+
+obstacleSprite:moveTo(450, trainY)
+obstacleSprite:add()
+
+
+-- ANIMATION
+local animationTimer = 0
+local animationFrame = 1
+local animationDelay = 10
+
+
+-- GAME STATE
+local gameStarted = false
+
+
+-- START GAME = reset all variables to their default values
+local function startGame()
+
+    gameStarted = true
+
+    trainSpeed = defaultSpeed
+
+    accelerationLockedUntil = 0
+
+    trainSprite:moveTo(trainX, trainY)
+
+    animationFrame = 1
+    animationTimer = 0 
+
+    trainSprite:setImage(trainImages[animationFrame])
+
+    obstacleSprite:moveTo(450, trainY)
+
 end
 
--- playdate.update function is required in every project!
-function playdate.update()
-    -- Clear screen
-    gfx.clear()
-    -- Draw crank indicator if crank is docked
-    if pd.isCrankDocked() then
-        pd.ui.crankIndicator:draw()
-    else
-        -- Calculate velocity from crank angle 
-        local crankPosition = pd.getCrankPosition() - 90
-        local xVelocity = math.cos(math.rad(crankPosition)) * playerVelocity
-        local yVelocity = math.sin(math.rad(crankPosition)) * playerVelocity
-        -- Move player
-        playerX += xVelocity
-        playerY += yVelocity
-        -- Loop player position
-        playerX = ring(playerX, -playerSize, 400 + playerSize)
-        playerY = ring(playerY, -playerSize, 240 + playerSize)
+
+-- DESTROY OBSTACLE by just moving it off-screen
+local function destroyObstacle()
+
+    obstacleSprite:moveTo(500, trainY)
+
+end
+
+
+-- UPDATE
+function pd.update()
+
+    gfx.sprite.update()
+
+
+    -- START SCREEN
+    if not gameStarted then
+
+        gfx.drawTextAligned("Press A to Start", 200, 40, kTextAlignment.center)
+
+        if pd.buttonJustPressed(pd.kButtonA) then
+            startGame()
+        end
+
+        return
     end
-    -- Draw text
-    gfx.drawTextAligned("Template configured!", 200, 30, kTextAlignment.center)
-    -- Draw player
-    playerImage:drawAnchored(playerX, playerY, 0.5, 0.5)
+
+    local currentTime = pd.getCurrentTimeMilliseconds()
+
+
+    -- CRANK SPEED CONTROL
+    local crankChange = pd.getCrankChange()
+
+    if crankChange > 0 then
+        -- crank forward = accelerate
+        -- (only allow acceleration if there is no more collision penalty)
+        if currentTime >= accelerationLockedUntil then
+            trainSpeed += crankChange * acceleration
+        end
+
+    elseif crankChange < 0 then
+        -- crank backward = brake
+        trainSpeed += crankChange * brake
+
+    end
+
+
+    -- SPEED LOSS
+    trainSpeed -= slowdown
+
+    -- SPEED LIMITS
+    if trainSpeed < minSpeed then
+        trainSpeed = minSpeed
+    end
+
+    if trainSpeed > maxSpeed then
+        trainSpeed = maxSpeed
+    end
+
+
+
+    -- TRAIN ANIMATION SPEED (higher speed = faster animation)
+    animationDelay = math.floor(
+        15 - trainSpeed
+    )
+
+    if animationDelay < 3 then
+        animationDelay = 3
+    end
+
+    if animationDelay > 15 then
+        animationDelay = 15
+    end
+
+
+    -- IDLE TRAIN ANIMATION
+    animationTimer += 1
+
+    if animationTimer >= animationDelay then
+
+        animationTimer = 0
+        animationFrame += 1
+
+        if animationFrame > #trainImages then
+            animationFrame = 1
+        end
+
+        trainSprite:setImage(trainImages[animationFrame])
+
+    end
+
+
+    -- MOVE OBSTACLE
+    obstacleSprite:moveBy(-trainSpeed, 0)
+
+
+    -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    -- this one should be changed by mini-game
+    -- for now I use B BUTTON to destroyObstacle
+    if pd.buttonJustPressed(pd.kButtonB) then
+
+        destroyObstacle()
+
+    end
+
+
+    -- OBSTACLE PASSED TRAIN
+    if obstacleSprite.x < -30 then
+
+        obstacleSprite:moveTo(450, trainY)
+
+    end
+
+
+    -- COLLISION
+    local collisions = trainSprite:overlappingSprites()
+
+    for i = 1, #collisions do
+
+        if collisions[i] == obstacleSprite then
+
+            trainSpeed = minSpeed -- extremely reduce speed
+            accelerationLockedUntil = currentTime + accelerationLockDuration -- block acceleration for 2 seconds 
+            destroyObstacle()
+            break
+
+        end
+
+    end
+
+
+    -- SPEED DISPLAY
+    gfx.drawTextAligned("Speed: " .. string.format("%.1f", trainSpeed), 10, 10, kTextAlignment.left)
+
 end
