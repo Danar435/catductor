@@ -1,6 +1,8 @@
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 
+import "combo"
+
 local pd = playdate
 local gfx = pd.graphics
 
@@ -80,6 +82,9 @@ local function startGame()
     trainSprite:setImage(trainImages[animationFrame])
 
     obstacleSprite:moveTo(450, trainY)
+
+    -- Start combo system
+    ComboSystem.resetGame()
 
 end
 
@@ -181,19 +186,19 @@ function pd.update()
 
     -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     -- this one should be changed by mini-game
-    -- for now I use B BUTTON to destroyObstacle
-    if pd.buttonJustPressed(pd.kButtonB) then
+    if ComboSystem.update() then
 
-        destroyObstacle()
+    destroyObstacle()
 
-    end
+    ComboSystem.startWall()
 
+end
 
     -- OBSTACLE PASSED TRAIN
     if obstacleSprite.x < -30 then
 
         obstacleSprite:moveTo(450, trainY)
-
+        ComboSystem.failWall()
     end
 
 
@@ -207,6 +212,7 @@ function pd.update()
             trainSpeed = minSpeed -- extremely reduce speed
             accelerationLockedUntil = currentTime + accelerationLockDuration -- block acceleration for 2 seconds 
             destroyObstacle()
+            ComboSystem.failWall()
             break
 
         end
@@ -216,5 +222,6 @@ function pd.update()
 
     -- SPEED DISPLAY
     gfx.drawTextAligned("Speed: " .. string.format("%.1f", trainSpeed), 10, 10, kTextAlignment.left)
-
+    ComboSystem.draw()
+    gfx.drawText("Walls: " .. ComboSystem.getWallsCleared(), 10, 30)
 end

@@ -3,49 +3,44 @@ import "CoreLibs/graphics"
 local pd <const> = playdate
 local gfx <const> = pd.graphics
 
-
---------------------------------------------------
--- COMBO SYSTEM
---------------------------------------------------
-
 ComboSystem = {}
 
-
---------------------------------------------------
--- BUTTON IMAGES
---------------------------------------------------
+-- Button sprites
 
 local buttonImages = {
 
-    A = gfx.image.new(
-        "images/placeholder-point-a"
-    ),
+    A =
+        gfx.image.new(
+            "images/placeholder-point-a"
+        ),
 
-    B = gfx.image.new(
-        "images/placeholder-point-b"
-    ),
+    B =
+        gfx.image.new(
+            "images/placeholder-point-b"
+        ),
 
-    UP = gfx.image.new(
-        "images/Arrow-up"
-    ),
+    UP =
+        gfx.image.new(
+            "images/Arrow-up"
+        ),
 
-    DOWN = gfx.image.new(
-        "images/Arrow-down"
-    ),
+    DOWN =
+        gfx.image.new(
+            "images/Arrow-down"
+        ),
 
-    LEFT = gfx.image.new(
-        "images/Arrow-left"
-    ),
+    LEFT =
+        gfx.image.new(
+            "images/Arrow-left"
+        ),
 
-    RIGHT = gfx.image.new(
-        "images/Arrow-right"
-    )
+    RIGHT =
+        gfx.image.new(
+            "images/Arrow-right"
+        )
 }
 
-
---------------------------------------------------
--- AVAILABLE INPUTS
---------------------------------------------------
+-- Possible combo inputs
 
 local possibleButtons = {
     "A",
@@ -56,10 +51,7 @@ local possibleButtons = {
     "RIGHT"
 }
 
-
---------------------------------------------------
--- DIFFICULTY
---------------------------------------------------
+-- Difficulty settings
 
 local difficultyLevels = {
 
@@ -80,46 +72,28 @@ local difficultyLevels = {
 
 }
 
-
---------------------------------------------------
--- STATE
---------------------------------------------------
-
-local currentCombo = {}
-
-local comboProgress = 1
-
-local wallsCleared = 0
-
-local comboActive = false
-
-
---------------------------------------------------
--- GET CURRENT COMBO LENGTH
---------------------------------------------------
+-- Decide current combo length
 
 local function getComboLength()
 
-    local comboLength =
+    local length =
         difficultyLevels[1].comboLength
 
     for _, level in ipairs(difficultyLevels) do
 
         if wallsCleared >= level.minWalls then
 
-            comboLength =
+            length =
                 level.comboLength
 
         end
+
     end
 
-    return comboLength
+    return length
 end
 
-
---------------------------------------------------
--- GENERATE COMBO
---------------------------------------------------
+-- Generate random combo
 
 local function generateCombo()
 
@@ -142,81 +116,97 @@ local function generateCombo()
     end
 
     comboProgress = 1
-end
-
-
---------------------------------------------------
--- START A NEW WALL
---------------------------------------------------
-
-function ComboSystem.startWall()
-
-    generateCombo()
 
     comboActive = true
 
 end
 
+-- Reset combo system
+function ComboSystem.resetGame()
 
---------------------------------------------------
--- GET PLAYER INPUT
---------------------------------------------------
+    wallsCleared = 0
+
+    generateCombo()
+
+end
+
+-- Start combo for next wall
+
+function ComboSystem.startWall()
+
+    generateCombo()
+
+end
+
+-- Get button input
 
 local function getPressedButton()
 
     if pd.buttonJustPressed(
         pd.kButtonA
     ) then
+
         return "A"
+
     end
+
 
     if pd.buttonJustPressed(
         pd.kButtonB
     ) then
+
         return "B"
+
     end
+
 
     if pd.buttonJustPressed(
         pd.kButtonUp
     ) then
+
         return "UP"
+
     end
+
 
     if pd.buttonJustPressed(
         pd.kButtonDown
     ) then
+
         return "DOWN"
+
     end
+
 
     if pd.buttonJustPressed(
         pd.kButtonLeft
     ) then
+
         return "LEFT"
+
     end
+
 
     if pd.buttonJustPressed(
         pd.kButtonRight
     ) then
+
         return "RIGHT"
+
     end
+
 
     return nil
 end
 
-
---------------------------------------------------
 -- UPDATE COMBO
---
--- Returns TRUE when the player successfully
--- finishes the whole combo.
---------------------------------------------------
+-- Returns true when the entire combo has been completed successfully.
 
 function ComboSystem.update()
 
     if not comboActive then
         return false
     end
-
 
     local input =
         getPressedButton()
@@ -229,19 +219,13 @@ function ComboSystem.update()
     local expectedButton =
         currentCombo[comboProgress]
 
-
-    --------------------------------------------------
     -- CORRECT INPUT
-    --------------------------------------------------
 
     if input == expectedButton then
 
         comboProgress += 1
 
-
-        --------------------------------------------------
-        -- WHOLE COMBO COMPLETE
-        --------------------------------------------------
+        -- COMBO COMPLETE
 
         if comboProgress > #currentCombo then
 
@@ -252,10 +236,7 @@ function ComboSystem.update()
             return true
         end
 
-
-    --------------------------------------------------
     -- WRONG INPUT
-    --------------------------------------------------
 
     else
 
@@ -267,24 +248,18 @@ function ComboSystem.update()
     return false
 end
 
-
---------------------------------------------------
--- WALL FAILED / COLLISION
---------------------------------------------------
+-- FAILED
 
 function ComboSystem.failWall()
 
-    -- Collision does NOT count as clearing a wall.
-    -- Simply generate a new combo for the next wall.
+    -- Does not increase wallsCleared.
+    -- Simply gives the next wall a new combo.
 
-    ComboSystem.startWall()
+    generateCombo()
 
 end
 
-
---------------------------------------------------
--- DRAW COMBO
---------------------------------------------------
+-- Draw combo on screen
 
 function ComboSystem.draw()
 
@@ -293,74 +268,61 @@ function ComboSystem.draw()
     end
 
 
-    local spacing = 8
+    local spacing = 50
 
-    local totalWidth = 0
-
-
-    --------------------------------------------------
-    -- Calculate total width of REMAINING icons
-    --------------------------------------------------
-
-    for i = comboProgress, #currentCombo do
-
-        local image =
-            buttonImages[currentCombo[i]]
-
-        if image then
-
-            local width, height =
-                image:getSize()
-
-            totalWidth += width
-
-            if i < #currentCombo then
-                totalWidth += spacing
-            end
-        end
-    end
+    local remainingInputs =
+        #currentCombo
+        - comboProgress
+        + 1
 
 
-    --------------------------------------------------
-    -- Center combo on screen
-    --------------------------------------------------
-
-    local currentX =
-        (400 - totalWidth) / 2
-
-    local y = 215
+    local totalWidth =
+        (remainingInputs - 1)
+        * spacing
 
 
-    --------------------------------------------------
-    -- Only draw inputs that haven't been completed
-    --------------------------------------------------
+    local startX =
+        200 - totalWidth / 2
+
+
+    local drawIndex = 0
+
+    -- Draw buttons that have not already been entered correctly.
 
     for i = comboProgress, #currentCombo do
 
+        local button =
+            currentCombo[i]
+
         local image =
-            buttonImages[currentCombo[i]]
+            buttonImages[button]
+
 
         if image then
 
-            local width, height =
-                image:getSize()
+            local x =
+                startX
+                + drawIndex
+                * spacing
 
             image:drawAnchored(
-                currentX + width / 2,
-                y,
+                x,
+                210,
                 0.5,
                 0.5
             )
 
-            currentX +=
-                width + spacing
         end
+
+
+        drawIndex += 1
+
     end
 end
 
 
 --------------------------------------------------
--- OPTIONAL DEBUG INFO
+-- DEBUG / INFORMATION
 --------------------------------------------------
 
 function ComboSystem.getWallsCleared()
