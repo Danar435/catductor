@@ -37,7 +37,7 @@ function pd.update()
         gfx.drawTextAligned(
             "Press A to Start",
             200,
-            40,
+            200,
             kTextAlignment.center
         )
 
@@ -71,19 +71,32 @@ function pd.update()
 
 
     -- UI
-    gfx.drawTextAligned(
-        "Speed: " .. string.format("%.1f", Train.getSpeed()),
-        10,
-        10,
-        kTextAlignment.left
-    )
 
-    gfx.drawText(
-        "Walls: " .. ComboSystem.getWallsCleared(),
-        10,
-        30
-    )
+    if Obstacle.getDistance() > 0 then
 
-    ComboSystem.draw()
+        gfx.drawText(
+            "Walls: " .. ComboSystem.getWallsCleared(),
+            10,
+            200
+        )
+        
+        gfx.drawTextAligned(
+            "Speed: " .. string.format("%.1f", Train.getSpeed()),
+            200,
+            200,
+            kTextAlignment.center
+        )
 
+        gfx.drawTextAligned(
+            string.format("%d", Obstacle.getDistance()),
+            390,
+            200,
+            kTextAlignment.right
+        )
+
+    else
+        
+        ComboSystem.draw()
+    
+    end
 end
