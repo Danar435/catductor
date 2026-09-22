@@ -9,7 +9,7 @@ Train = {}
 
 -- TRAIN SPRITE
 local trainX = 40
-local trainY = 120
+local trainY = 80
 
 local trainImages = {
 
@@ -36,6 +36,48 @@ trainSprite:moveTo(
 )
 trainSprite:add()
 
+
+-- SPEED IMAGE
+local speedImages = {
+    gfx.image.new("images/speed-placeholder-1"),
+    gfx.image.new("images/speed-placeholder-2"),
+    gfx.image.new("images/speed-placeholder-3"),
+    gfx.image.new("images/speed-placeholder-4"),
+    gfx.image.new("images/speed-placeholder-5")
+}
+
+local speedSprite = gfx.sprite.new(speedImages[1])
+
+speedSprite:setZIndex(10)
+speedSprite:moveTo(
+    trainX,
+    trainY
+)
+
+speedSprite:add()
+
+-- STEAM SPRITE
+local steamImages = {
+    gfx.image.new("images/steam-placeholder-1"),
+    gfx.image.new("images/steam-placeholder-2")
+}
+
+local steamSprite = gfx.sprite.new(steamImages[1])
+
+steamSprite:setZIndex(20)
+
+steamSprite:moveTo(
+    trainX,
+    trainY
+)
+
+steamSprite:add()
+
+steamSprite:setVisible(false) -- initially invisible
+
+local steamFrame = 1
+local steamTimer = 0
+local steamAnimationDelay = 8
 
 -- SPEED
 local defaultSpeed = 3
@@ -64,10 +106,19 @@ local animationDelay = 10
 function Train.reset()
 
     trainSpeed = defaultSpeed
-
     accelerationLockedUntil = 0
 
     trainSprite:moveTo(
+        trainX,
+        trainY
+    )
+
+    speedSprite:moveTo(
+        trainX,
+        trainY
+    )
+
+    steamSprite:moveTo(
         trainX,
         trainY
     )
@@ -79,8 +130,89 @@ function Train.reset()
         trainImages[animationFrame]
     )
 
+    speedSprite:setImage(
+        speedImages[3]
+    )
+
+    steamSprite:setVisible(false)
+
+    steamFrame = 1
+    steamTimer = 0
+
+    steamSprite:setImage(
+        steamImages[1]
+    )
 end
 
+-- SPEED IMAGE UPDATE
+local function updateSpeedImage()
+
+    local speedImageIndex
+
+    if trainSpeed < 2 then
+        speedImageIndex = 1
+
+    elseif trainSpeed < 4 then
+        speedImageIndex = 2
+
+    elseif trainSpeed < 6 then
+        speedImageIndex = 3
+
+    elseif trainSpeed < 8 then
+        speedImageIndex = 4
+
+    else
+        speedImageIndex = 5
+    end
+
+    speedSprite:setImage(
+        speedImages[speedImageIndex]
+    )
+end
+
+local function updateSteam(crankChange)
+
+    local currentTime =
+        pd.getCurrentTimeMilliseconds()
+
+    -- Steam only when:
+    -- - crank is moving forward
+    -- - acceleration is not locked
+
+    if crankChange > 0
+        and currentTime >= accelerationLockedUntil then
+
+        steamSprite:setVisible(true)
+
+        steamTimer += 1
+
+        if steamTimer >= steamAnimationDelay then
+
+            steamTimer = 0
+
+            steamFrame += 1
+
+            if steamFrame > #steamImages then
+                steamFrame = 1
+            end
+
+            steamSprite:setImage(
+                steamImages[steamFrame]
+            )
+        end
+
+    else
+
+        steamSprite:setVisible(false)
+
+        steamFrame = 1
+        steamTimer = 0
+
+        steamSprite:setImage(
+            steamImages[1]
+        )
+    end
+end
 
 -- SPEED UPDATE
 local function updateSpeed()
@@ -92,7 +224,7 @@ local function updateSpeed()
         pd.getCrankChange()
 
 
-    -- Crank forward
+    -- crank forward
     if crankChange > 0 then
 
         if currentTime >= accelerationLockedUntil then
@@ -103,7 +235,7 @@ local function updateSpeed()
         end
 
 
-    -- Crank backward
+    -- crank backward
     elseif crankChange < 0 then
 
         trainSpeed +=
@@ -112,11 +244,11 @@ local function updateSpeed()
     end
 
 
-    -- Natural slowdown
+    -- natural slowdown
     trainSpeed -= slowdown
 
 
-    -- Speed limits
+    -- speed limits
     if trainSpeed < minSpeed then
         trainSpeed = minSpeed
     end
@@ -132,7 +264,7 @@ end
 -- ANIMATION UPDATE
 local function updateAnimation()
 
-    -- Higher speed = faster animation
+    -- higher speed = faster animation
 
     animationDelay =
         math.floor(15 - trainSpeed)
@@ -170,9 +302,22 @@ end
 -- UPDATE
 function Train.update()
 
+    local crankChange = pd.getCrankChange()
+
     updateSpeed()
     updateAnimation()
+    updateSpeedImage()
+    updateSteam(crankChange)
 
+    speedSprite:moveTo(
+        trainSprite.x,
+        trainSprite.y
+    )
+
+    steamSprite:moveTo(
+        trainSprite.x,
+        trainSprite.y
+    )
 end
 
 

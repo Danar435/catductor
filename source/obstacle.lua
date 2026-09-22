@@ -25,7 +25,7 @@ obstacleSprite:setCollideRect(
 
 obstacleSprite:moveTo(
     450,
-    120
+    100
 )
 
 obstacleSprite:add()
@@ -36,7 +36,7 @@ function Obstacle.reset()
 
     obstacleSprite:moveTo(
         450,
-        120
+        100
     )
 
 end
@@ -53,12 +53,12 @@ function Obstacle.update()
     )
 
 
-    -- Obstacle passed the train
+    -- obstacle passed the train
     if obstacleSprite.x < -30 then
 
         obstacleSprite:moveTo(
             450,
-            120
+            100
         )
 
         ComboSystem.failWall()
@@ -73,7 +73,7 @@ function Obstacle.destroy()
 
     obstacleSprite:moveTo(
         500,
-        120
+        100
     )
 
 end
