@@ -5,45 +5,32 @@ local gfx = playdate.graphics
 
 Obstacle = {}
 
-
 -- OBSTACLE
 local obstacleImage =
     gfx.image.new("images/obstacle")
 
 local obstacleSprite = {}
-local obstacleY = 100
 local obstacleNext = 1
+local obstacleY = 100
 
-
-
--- INIT
+-- RESET
 function Obstacle.reset()
 
-    obstacleSprite = {}
     local obstacleDistanceSum = 0
 
     for i, obstacleDistance in ipairs(Level1.obstacles) do
 
         obstacleDistanceSum += obstacleDistance * 100
-        local obstacle = gfx.sprite.new(obstacleImage)
 
-        obstacle.collisionResponse =
-            gfx.sprite.kCollisionTypeOverlap
-        obstacle:setCollideRect(
-            0,
-            0,
-            30,
-            100
-        )
-        obstacle:moveTo(
-            obstacleDistanceSum,
-            obstacleY
-        )
+        local obstacle = gfx.sprite.new(obstacleImage)
+        obstacle.collisionResponse = gfx.sprite.kCollisionTypeOverlap
+        obstacle:setCollideRect(0, 0, 30, 100)
+        obstacle:moveTo(obstacleDistanceSum, obstacleY)
         obstacle:add()
 
         obstacleSprite[i] = obstacle
-    end
 
+    end
 end
 
 -- UPDATE
@@ -57,15 +44,7 @@ function Obstacle.update()
             -speed,
             0
         )
-
-
-        -- obstacle passed the train
-        if obstacle.x < -30 then
-
-            obstacle:remove()
-            ComboSystem.failWall()
-
-        end
+        
     end
 
 end
@@ -89,12 +68,10 @@ function Obstacle.checkCollision(
         trainSprite:overlappingSprites()
 
     for i, overlappingSprite in ipairs(collisions) do
-        for j, obstacle in ipairs(obstacleSprite) do
 
-            if overlappingSprite == obstacle then
-                return true
-            end
-
+        if overlappingSprite == obstacleSprite[obstacleNext] then
+            return true
+            
         end
     end
 
