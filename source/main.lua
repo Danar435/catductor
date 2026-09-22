@@ -1,6 +1,7 @@
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 
+import "background"
 import "train"
 import "obstacle"
 import "combo"
@@ -8,6 +9,7 @@ import "combo"
 local pd = playdate
 local gfx = pd.graphics
 
+Background.init()
 
 local gameStarted = false
 
@@ -46,6 +48,7 @@ function pd.update()
     end
 
     Train.update()
+    Background.update()
     Obstacle.update()
 
     if ComboSystem.update() then
