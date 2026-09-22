@@ -40,16 +40,42 @@ local buttonImages = {
         )
 }
 
--- Possible combo inputs
+-- Button POOLS FOR EACH LEVEL
 
-local possibleButtons = {
-    "A",
-    "B",
-    "UP",
-    "DOWN",
-    "LEFT",
-    "RIGHT"
+local buttonPools = {
+
+    -- Level 1: D-pad only
+    [1] = {
+        "UP",
+        "DOWN",
+        "LEFT",
+        "RIGHT"
+    },
+
+    -- Level 2: A/B only
+    [2] = {
+        "A",
+        "B"
+    },
+
+    -- Level 3: all buttons
+    [3] = {
+        "A",
+        "B",
+        "UP",
+        "DOWN",
+        "LEFT",
+        "RIGHT"
+    }
+
 }
+
+
+-- Current level
+local currentLevel = 1
+
+
+local possibleButtons = buttonPools[currentLevel]
 
 -- Difficulty settings
 
@@ -102,6 +128,21 @@ local function generateCombo()
     local comboLength =
         getComboLength()
 
+    -- Get the button pool for the current level
+    local possibleButtons =
+        buttonPools[currentLevel]
+
+    -- Safety check
+    if possibleButtons == nil then
+
+        print(
+            "ERROR: No button pool for level "
+            .. tostring(currentLevel)
+        )
+
+        return
+    end
+
     for i = 1, comboLength do
 
         local randomIndex =
@@ -116,8 +157,25 @@ local function generateCombo()
     end
 
     ComboProgress = 1
-
     ComboActive = true
+
+end
+
+-- Set level
+
+function ComboSystem.setLevel(level)
+
+    if buttonPools[level] == nil then
+
+        print(
+            "Invalid combo level: "
+            .. tostring(level)
+        )
+
+        return
+    end
+
+    currentLevel = level
 
 end
 
