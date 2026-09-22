@@ -270,19 +270,15 @@ end
 -- ANIMATION UPDATE
 local function updateAnimation()
 
-    -- higher speed = faster animation
+    animationDelay = math.floor(18 - trainSpeed*2)
 
-    animationDelay =
-        math.floor(15 - trainSpeed)
-
-    if animationDelay < 3 then
-        animationDelay = 3
+    if animationDelay < 1 then
+        animationDelay = 1
     end
 
-    if animationDelay > 15 then
-        animationDelay = 15
+    if animationDelay > 18 then
+        animationDelay = 18
     end
-
 
     animationTimer += 1
 
@@ -299,9 +295,7 @@ local function updateAnimation()
         trainSprite:setImage(
             trainImages[animationFrame]
         )
-
     end
-
 end
 
 
