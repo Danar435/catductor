@@ -6,6 +6,7 @@ import "train"
 import "obstacle"
 import "combo"
 import "level1"
+import "overview"
 
 local pd = playdate
 local gfx = pd.graphics
@@ -71,6 +72,8 @@ function pd.update()
 
 
     -- UI
+
+    TripOverview.draw()
 
     if Obstacle.getDistance() > 0 then
 
