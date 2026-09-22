@@ -44,18 +44,18 @@ local buttonImages = {
 
 local buttonPools = {
 
-    -- Level 1: D-pad only
+    -- Level 1: A/B only
     [1] = {
+        "A",
+        "B"
+    },
+
+    -- Level 2: D-pad only
+    [2] = {
         "UP",
         "DOWN",
         "LEFT",
         "RIGHT"
-    },
-
-    -- Level 2: A/B only
-    [2] = {
-        "A",
-        "B"
     },
 
     -- Level 3: all buttons
