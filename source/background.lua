@@ -32,7 +32,7 @@ bottomSprite1:setZIndex(80)
 bottomSprite2:setZIndex(80)
 
 local topY = 33
-local middleY = 127
+local middleY = 136
 local bottomY = 150
 
 
