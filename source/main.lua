@@ -15,18 +15,17 @@ Background.init()
 
 local gameStarted = false
 
-
 local function startGame()
 
     gameStarted = true
 
     Train.reset()
     Obstacle.reset()
+    -- Level 1 uses D-pad combos
+    ComboSystem.setLevel(1)
     ComboSystem.resetGame()
 
 end
-
-
 
 function pd.update()
 
