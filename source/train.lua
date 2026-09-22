@@ -8,17 +8,19 @@ Train = {}
 
 
 -- TRAIN SPRITE
-local trainX = 40
+local trainX = 65
 local trainY = 80
 
 local trainImages = {
 
-    gfx.image.new("images/train-placeholder-1"),
-    gfx.image.new("images/train-placeholder-2"),
-    gfx.image.new("images/train-placeholder-3"),
-    gfx.image.new("images/train-placeholder-4"),
-    gfx.image.new("images/train-placeholder-5")
-
+    gfx.image.new("images/train1"),
+    gfx.image.new("images/train2"),
+    gfx.image.new("images/train3"),
+    gfx.image.new("images/train4"),
+    gfx.image.new("images/train5"),
+    gfx.image.new("images/train6"),
+    gfx.image.new("images/train7"),
+    gfx.image.new("images/train8")
 }
 
 local trainSprite = gfx.sprite.new(trainImages[1])
@@ -39,11 +41,11 @@ trainSprite:add()
 
 -- SPEED IMAGE
 local speedImages = {
-    gfx.image.new("images/speed-placeholder-1"),
-    gfx.image.new("images/speed-placeholder-2"),
-    gfx.image.new("images/speed-placeholder-3"),
-    gfx.image.new("images/speed-placeholder-4"),
-    gfx.image.new("images/speed-placeholder-5")
+    gfx.image.new("images/speed1"),
+    gfx.image.new("images/speed2"),
+    gfx.image.new("images/speed3"),
+    gfx.image.new("images/speed4"),
+    gfx.image.new("images/speed5")
 }
 
 local speedSprite = gfx.sprite.new(speedImages[1])
@@ -58,8 +60,12 @@ speedSprite:add()
 
 -- STEAM SPRITE
 local steamImages = {
-    gfx.image.new("images/steam-placeholder-1"),
-    gfx.image.new("images/steam-placeholder-2")
+    gfx.image.new("images/steam1"),
+    gfx.image.new("images/steam2"),
+    gfx.image.new("images/steam3"),
+    gfx.image.new("images/steam4"),
+    gfx.image.new("images/steam5"),
+    gfx.image.new("images/steam6")
 }
 
 local steamSprite = gfx.sprite.new(steamImages[1])
@@ -264,19 +270,15 @@ end
 -- ANIMATION UPDATE
 local function updateAnimation()
 
-    -- higher speed = faster animation
+    animationDelay = math.floor(18 - trainSpeed*2)
 
-    animationDelay =
-        math.floor(15 - trainSpeed)
-
-    if animationDelay < 3 then
-        animationDelay = 3
+    if animationDelay < 1 then
+        animationDelay = 1
     end
 
-    if animationDelay > 15 then
-        animationDelay = 15
+    if animationDelay > 18 then
+        animationDelay = 18
     end
-
 
     animationTimer += 1
 
@@ -293,9 +295,7 @@ local function updateAnimation()
         trainSprite:setImage(
             trainImages[animationFrame]
         )
-
     end
-
 end
 
 
