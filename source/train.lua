@@ -84,10 +84,10 @@ local defaultSpeed = 3
 local trainSpeed = defaultSpeed
 
 local minSpeed = 1
-local maxSpeed = 10
+local maxSpeed = 20
 
-local acceleration = 0.01
-local brake = 0.5
+local acceleration = 0.005
+local brake = 0.0025
 local slowdown = 0.05
 
 

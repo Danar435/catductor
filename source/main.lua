@@ -5,6 +5,7 @@ import "background"
 import "train"
 import "obstacle"
 import "combo"
+import "level1"
 
 local pd = playdate
 local gfx = pd.graphics
@@ -54,7 +55,6 @@ function pd.update()
     if ComboSystem.update() then
 
         Obstacle.destroy()
-
         ComboSystem.startWall()
 
     end

@@ -5,64 +5,46 @@ local gfx = playdate.graphics
 
 Obstacle = {}
 
-
 -- OBSTACLE
 local obstacleImage =
     gfx.image.new("images/obstacle")
 
-local obstacleSprite =
-    gfx.sprite.new(obstacleImage)
-
-obstacleSprite.collisionResponse =
-    gfx.sprite.kCollisionTypeOverlap
-
-obstacleSprite:setCollideRect(
-    0,
-    0,
-    30,
-    100
-)
-
-obstacleSprite:moveTo(
-    450,
-    100
-)
-
-obstacleSprite:add()
-
+local obstacleSprite = {}
+local obstacleNext = 1
+local obstacleY = 100
 
 -- RESET
 function Obstacle.reset()
 
-    obstacleSprite:moveTo(
-        450,
-        100
-    )
+    local obstacleDistanceSum = 0
 
+    for i, obstacleDistance in ipairs(Level1.obstacles) do
+
+        obstacleDistanceSum += obstacleDistance * 100
+
+        local obstacle = gfx.sprite.new(obstacleImage)
+        obstacle.collisionResponse = gfx.sprite.kCollisionTypeOverlap
+        obstacle:setCollideRect(0, 0, 30, 100)
+        obstacle:moveTo(obstacleDistanceSum, obstacleY)
+        obstacle:add()
+
+        obstacleSprite[i] = obstacle
+
+    end
 end
-
 
 -- UPDATE
 function Obstacle.update()
 
     local speed = Train.getSpeed()
 
-    obstacleSprite:moveBy(
-        -speed,
-        0
-    )
+    for i, obstacle in ipairs(obstacleSprite) do
 
-
-    -- obstacle passed the train
-    if obstacleSprite.x < -30 then
-
-        obstacleSprite:moveTo(
-            450,
-            100
+        obstacle:moveBy(
+            -speed,
+            0
         )
-
-        ComboSystem.failWall()
-
+        
     end
 
 end
@@ -71,10 +53,8 @@ end
 -- DESTROY
 function Obstacle.destroy()
 
-    obstacleSprite:moveTo(
-        500,
-        100
-    )
+    obstacleSprite[obstacleNext]:remove()
+    obstacleNext += 1
 
 end
 
@@ -87,12 +67,12 @@ function Obstacle.checkCollision(
     local collisions =
         trainSprite:overlappingSprites()
 
-    for i = 1, #collisions do
+    for i, overlappingSprite in ipairs(collisions) do
 
-        if collisions[i] == obstacleSprite then
+        if overlappingSprite == obstacleSprite[obstacleNext] then
             return true
+            
         end
-
     end
 
     return false
