@@ -11,12 +11,12 @@ local buttonImages = {
 
     A =
         gfx.image.new(
-            "images/placeholder-point-a"
+            "images/button-a"
         ),
 
     B =
         gfx.image.new(
-            "images/placeholder-point-b"
+            "images/button-b"
         ),
 
     UP =
@@ -204,7 +204,7 @@ end
 
 function ComboSystem.update()
 
-    if not ComboActive then
+    if not ComboActive or Obstacle.getDistance() > 0 then
         return false
     end
 
