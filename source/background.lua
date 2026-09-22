@@ -5,8 +5,8 @@ local gfx = playdate.graphics
 
 Background = {}
 
-local topImage = gfx.image.new("images/background-top-placeholder")
-local middleImage = gfx.image.new("images/background-middle-placeholder")
+local topImage = gfx.image.new("images/background-top")
+local middleImage = gfx.image.new("images/background-middle")
 local bottomImage = gfx.image.new("images/background-bottom-placeholder")
 
 local topWidth, topHeight = topImage:getSize()
@@ -31,8 +31,8 @@ middleSprite2:setZIndex(-90)
 bottomSprite1:setZIndex(80)
 bottomSprite2:setZIndex(80)
 
-local topY = 40
-local middleY = 120
+local topY = 33
+local middleY = 127
 local bottomY = 150
 
 

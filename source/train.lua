@@ -107,6 +107,7 @@ local animationTimer = 0
 local animationFrame = 1
 local animationDelay = 10
 
+local trainBounceUp = false
 
 -- RESET
 function Train.reset()
@@ -131,6 +132,7 @@ function Train.reset()
 
     animationFrame = 1
     animationTimer = 0
+    trainBounceUp = false
 
     trainSprite:setImage(
         trainImages[animationFrame]
@@ -268,9 +270,14 @@ end
 
 
 -- ANIMATION UPDATE
-local function updateAnimation()
+local function updateAnimation(crankChange)
 
-    animationDelay = math.floor(18 - trainSpeed*2)
+    -- when turning the crank backwards = freeze the train animation
+    if crankChange < 0 then
+        return
+    end
+
+    animationDelay = math.floor(18 - trainSpeed * 2)
 
     if animationDelay < 1 then
         animationDelay = 1
@@ -286,6 +293,7 @@ local function updateAnimation()
 
         animationTimer = 0
 
+        -- next train animation frame
         animationFrame += 1
 
         if animationFrame > #trainImages then
@@ -295,6 +303,23 @@ local function updateAnimation()
         trainSprite:setImage(
             trainImages[animationFrame]
         )
+
+        -- train movement
+        if trainBounceUp then
+            trainSprite:moveTo(
+                trainX,
+                trainY
+            )
+
+            trainBounceUp = false
+        else
+            trainSprite:moveTo(
+                trainX,
+                trainY - 1
+            )
+
+            trainBounceUp = true
+        end
     end
 end
 
@@ -305,7 +330,7 @@ function Train.update()
     local crankChange = pd.getCrankChange()
 
     updateSpeed()
-    updateAnimation()
+    updateAnimation(crankChange)
     updateSpeedImage()
     updateSteam(crankChange)
 
