@@ -82,5 +82,10 @@ end
 -- DISTANCE
 function Obstacle.getDistance()
     local x, y = obstacleSprite[obstacleNext]:getPosition()
-    return math.floor(x) - 400 
+    return math.floor(x) - 400
+end
+
+-- NEXT
+function Obstacle.getNextID()
+    return obstacleNext
 end
