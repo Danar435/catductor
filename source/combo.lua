@@ -129,16 +129,11 @@ local function generateCombo()
         getComboLength()
 
     -- Get the button pool for the current level
-    local possibleButtons =
-        buttonPools[currentLevel]
+    local possibleButtons = buttonPools[currentLevel]
 
-    -- Safety check
     if possibleButtons == nil then
 
-        print(
-            "ERROR: No button pool for level "
-            .. tostring(currentLevel)
-        )
+        print("ERROR: No button pool for level " .. tostring(currentLevel))
 
         return
     end
@@ -167,10 +162,7 @@ function ComboSystem.setLevel(level)
 
     if buttonPools[level] == nil then
 
-        print(
-            "Invalid combo level: "
-            .. tostring(level)
-        )
+        print("Invalid combo level: " .. tostring(level))
 
         return
     end
