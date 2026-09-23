@@ -28,18 +28,18 @@ local steamIndexPrevious = 2
 
 function Sound.update()
 
-    local trainSpeed = Train.getSpeed()
+    local trainSpeed = TrainSpeed.getSpeed()
 
     -- Not my proudest code
-    if trainSpeed < 2 and steamIndex ~= 1 then
+    if trainSpeed < 3 and steamIndex ~= 1 then
         steamIndex = 1
-    elseif trainSpeed > 2 and trainSpeed < 4 and steamIndex ~= 2 then
+    elseif trainSpeed > 3 and trainSpeed < 6 and steamIndex ~= 2 then
         steamIndex = 2
-    elseif trainSpeed > 4 and trainSpeed < 6 and steamIndex ~= 3 then
+    elseif trainSpeed > 6 and trainSpeed < 9 and steamIndex ~= 3 then
         steamIndex = 3
-    elseif trainSpeed > 6 and trainSpeed < 8 and steamIndex ~= 4 then
+    elseif trainSpeed > 9 and trainSpeed < 12 and steamIndex ~= 4 then
         steamIndex = 4
-    elseif trainSpeed > 8 and steamIndex ~= 5 then
+    elseif trainSpeed > 12 and steamIndex ~= 5 then
         steamIndex = 5
     end
 
