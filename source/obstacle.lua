@@ -224,10 +224,25 @@ end
 -- DISTANCE
 function Obstacle.getDistance()
 
+     local obstacle =
+        obstacleSprite[obstacleNext]
+
+    if obstacle == nil then
+        return nil
+    end
+
     local x, y =
-        obstacleSprite[obstacleNext]:getPosition()
+        obstacle:getPosition()
 
     return math.floor(x) - 400
+
+end
+
+-- LEVEL COMPLETE
+function Obstacle.isLevelComplete()
+
+    return obstacleNext > #obstacleSprite
+
 end
 
 function Obstacle.getNextID()

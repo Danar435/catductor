@@ -13,6 +13,12 @@ local trainPos = lineXpos
 local catIcon = gfx.image.new("images/overview/cat-icon")
 local mouseIcon = gfx.image.new("images/overview/mouse-icon")
 
+function TripOverview.reset()
+
+    trainPos = lineXpos
+
+end
+
 function TripOverview.draw()
 
     local multiplier = Level1.distance / lineLength
