@@ -52,7 +52,7 @@ function Train.reset()
     TrainAnimation.reset(trainSprite)
 
     speedSprite:moveTo(trainX, trainY)
-    speedSprite:setImage(speedImages[3])
+    speedSprite:setImage(speedImages[2])
 end
 
 -- SPEED IMAGE
