@@ -24,6 +24,7 @@ local function startGame()
     -- Level 1 uses D-pad combos
     ComboSystem.setLevel(1)
     ComboSystem.resetGame()
+    TripOverview.reset()
 
 end
 
@@ -55,6 +56,13 @@ function pd.update()
     if ComboSystem.update() then
 
         Obstacle.destroy()
+
+        if Obstacle.isLevelComplete() then
+            gameStarted = false
+            return
+
+        end
+
         ComboSystem.startWall()
 
     end
@@ -65,6 +73,14 @@ function pd.update()
 
         Train.penalize()
         Obstacle.destroy()
+
+        if Obstacle.isLevelComplete() then
+
+        gameStarted = false
+        return
+
+        end
+
         ComboSystem.failWall()
 
     end
@@ -74,7 +90,10 @@ function pd.update()
 
     TripOverview.draw()
 
-    if Obstacle.getDistance() > 0 then
+    local obstacleDistance =
+    Obstacle.getDistance()
+
+    if obstacleDistance and obstacleDistance > 0 then
 
         gfx.drawText(
             "Walls: " .. ComboSystem.getWallsCleared(),
@@ -96,7 +115,7 @@ function pd.update()
             kTextAlignment.right
         )
 
-    else
+    elseif obstacleDistance then
         
         ComboSystem.draw()
     

@@ -10,6 +10,12 @@ local lineYpos = 10
 local lineXpos = (400 - lineLength)/2
 local trainPos = lineXpos
 
+function TripOverview.reset()
+
+    trainPos = lineXpos
+
+end
+
 function TripOverview.draw()
 
     local multiplier = Level1.distance / lineLength
