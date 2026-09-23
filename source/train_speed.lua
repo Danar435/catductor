@@ -2,7 +2,7 @@ local pd = playdate
 
 TrainSpeed = {}
 
-local defaultSpeed = 3
+local defaultSpeed = 4
 local trainSpeed = defaultSpeed
 
 local minSpeed = 1

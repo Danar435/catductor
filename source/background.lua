@@ -91,7 +91,7 @@ function Background.update()
 
     local topSpeed = trainSpeed * 0.25
     local middleSpeed = trainSpeed
-    local bottomSpeed = trainSpeed * 0.5
+    local bottomSpeed = trainSpeed / 0.4
 
     scrollLayer(
         topSprite1,

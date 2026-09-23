@@ -25,12 +25,8 @@ function TripOverview.draw()
     local obstaclePos = lineXpos
 
     -- Line
-    gfx.drawLine(lineXpos, lineYpos, lineXpos + lineLength, lineYpos)
-
-    -- Train
-    trainPos += (Train.getSpeed() / multiplier) / 100
-    --gfx.fillCircleInRect(trainPos, 5, 10, 10)
-    catIcon:draw(trainPos - catIcon.width / 2, lineYpos - catIcon.height / 2)
+    gfx.drawLine(lineXpos, lineYpos+7, lineXpos + lineLength, lineYpos+7)
+    gfx.drawLine(lineXpos, lineYpos+9, lineXpos + lineLength, lineYpos+9)
 
     -- Obstacles
     for i, obstacleDistance in ipairs(Level1.obstacles) do
@@ -43,5 +39,10 @@ function TripOverview.draw()
         
         end
     end
+
+    -- Train
+    trainPos += (Train.getSpeed() / multiplier) / 100
+    --gfx.fillCircleInRect(trainPos, 5, 10, 10)
+    catIcon:draw(trainPos - catIcon.width / 2, lineYpos - catIcon.height / 2)
 end
 
