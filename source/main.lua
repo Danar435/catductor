@@ -48,6 +48,7 @@ local function startCountdown()
     ComboSystem.setLevel(1)
     ComboSystem.resetGame()
     TripOverview.reset()
+end   
 
 local function startGame()
     gameStarted = true
