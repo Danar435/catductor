@@ -26,6 +26,7 @@ Train.init()
 -- GAME STATES
 local gameStarted = false
 local countdownActive = false
+local gameResult = nil
 
 -- COUNTDOWN
 local countdownNumber = 0
@@ -33,6 +34,20 @@ local countdownTimer = 0
 
 local countdownDuration = 1000
 local countdownGoDuration = 700
+
+--LEVEL TIMER
+local levelStartTime = 0
+local timeRemaining = Level1.time
+
+--LEVEL FINISH
+local function finishLevel(result)
+
+    gameStarted = false
+    countdownActive = false
+
+    gameResult = result
+
+end
 
 local function startCountdown()
 
@@ -51,12 +66,21 @@ local function startCountdown()
     ComboSystem.resetGame()
     TripOverview.reset()
     Sound.playStart()
+    
+    -- Reset level timer
+    timeRemaining = Level1.time
+    
 end   
 
 local function startGame()
     gameStarted = true
     countdownActive = false
     Sound.playBGM()
+
+    -- Timer starts AFTER countdown
+    levelStartTime = pd.getCurrentTimeMilliseconds()
+    timeRemaining = Level1.time
+    
 end
 
 local function updateCountdown()
@@ -84,9 +108,137 @@ local function updateCountdown()
     end
 end
 
+-- UPDATE TIMER
+local function updateLevelTimer()
+
+    local currentTime = pd.getCurrentTimeMilliseconds()
+
+    local elapsed = (currentTime - levelStartTime) / 1000
+
+    timeRemaining = Level1.time - elapsed
+
+    if timeRemaining <= 0 then
+
+        timeRemaining = 0
+
+        finishLevel("lose")
+
+        return false
+
+    end
+
+    return true
+
+end
+
+-- LEVEL COMPLETE
+local function checkLevelComplete()
+    if Obstacle.isLevelComplete() then
+
+        if timeRemaining > 0 then
+            finishLevel("win")
+        else
+            finishLevel("lose")
+        end
+
+        return true
+
+    end
+
+    return false
+
+end
+
 function pd.update()
 
     gfx.sprite.update()
+
+    --RESULT SCREEN - simple panel
+    if gameResult ~= nil then
+
+    gfx.setColor(gfx.kColorWhite)
+
+    gfx.fillRect(
+        40,
+        60,
+        320,
+        120
+    )
+
+    gfx.setColor(gfx.kColorBlack)
+
+    gfx.drawRect(
+        40,
+        60,
+        320,
+        120
+    )
+
+        if gameResult == "win" then
+
+            gfx.drawTextAligned(
+                "LEVEL COMPLETE!",
+                200,
+                90,
+                kTextAlignment.center
+            )
+
+            gfx.drawTextAligned(
+                "Time remaining: "
+                .. string.format("%.1f", timeRemaining),
+                200,
+                120,
+                kTextAlignment.center
+            )
+
+            gfx.drawTextAligned(
+                "Press A to return",
+                200,
+                160,
+                kTextAlignment.center
+            )
+
+
+            if pd.buttonJustPressed(pd.kButtonA) then
+
+                gameResult = nil
+                
+                -- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                -- Temporary behavior until Level 2
+                titleSprite:setVisible(true)
+
+            end
+
+
+        elseif gameResult == "lose" then
+
+            gfx.drawTextAligned(
+                "TIME'S UP!",
+                200,
+                100,
+                kTextAlignment.center
+            )
+
+            gfx.drawTextAligned(
+                "Press A to retry",
+                200,
+                140,
+                kTextAlignment.center
+            )
+
+            if pd.buttonJustPressed(pd.kButtonA) then
+
+                gameResult = nil
+
+                -- Restart current level
+                startCountdown()
+
+            end
+
+        end
+
+        return
+    end
 
     -- START SCREEN
     if not gameStarted and not countdownActive then
@@ -133,6 +285,11 @@ function pd.update()
         return
     end
 
+    -- LEVEL TIMER
+    if not updateLevelTimer() then
+        return
+    end
+
     -- GAME
     Train.update()
     Background.update()
@@ -144,10 +301,8 @@ function pd.update()
         Sound.playExplosion()
         Obstacle.destroy()
 
-        if Obstacle.isLevelComplete() then
-            gameStarted = false
+        if checkLevelComplete() then
             return
-
         end
 
         ComboSystem.startWall()
@@ -160,12 +315,9 @@ function pd.update()
         Train.penalize()
         Obstacle.destroy()
 
-        if Obstacle.isLevelComplete() then
-
-        gameStarted = false
+        if checkLevelComplete() then
         return
-
-        end
+    end
 
         ComboSystem.failWall()
     end
@@ -173,16 +325,18 @@ function pd.update()
     -- UI
     TripOverview.draw()
 
+    --TIMER
+    gfx.drawText(
+        "Time: "
+        .. string.format("%.1f", timeRemaining),
+        10,
+        200
+    )
+
     local obstacleDistance =
     Obstacle.getDistance()
 
     if obstacleDistance and obstacleDistance > 0 then
-
-        gfx.drawText(
-            "Walls: " .. ComboSystem.getWallsCleared(),
-            10,
-            200
-        )
 
         gfx.drawTextAligned(
             "Speed: " .. string.format("%.1f", Train.getSpeed()),
