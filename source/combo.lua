@@ -11,32 +11,32 @@ local buttonImages = {
 
     A =
         gfx.image.new(
-            "images/button-a"
+            "images/buttons/button-a"
         ),
 
     B =
         gfx.image.new(
-            "images/button-b"
+            "images/buttons/button-b"
         ),
 
     UP =
         gfx.image.new(
-            "images/arrow-up"
+            "images/buttons/arrow-up"
         ),
 
     DOWN =
         gfx.image.new(
-            "images/arrow-down"
+            "images/buttons/arrow-down"
         ),
 
     LEFT =
         gfx.image.new(
-            "images/arrow-left"
+            "images/buttons/arrow-left"
         ),
 
     RIGHT =
         gfx.image.new(
-            "images/arrow-right"
+            "images/buttons/arrow-right"
         )
 }
 
