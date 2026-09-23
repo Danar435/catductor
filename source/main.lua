@@ -7,6 +7,7 @@ import "obstacle"
 import "combo"
 import "level1"
 import "overview"
+import "sound"
 
 local pd = playdate
 local gfx = pd.graphics
@@ -51,7 +52,7 @@ end
 local function startCountdown()
 
     countdownActive = true
-    countdownNumber = 3
+    countdownNumber = 2
     countdownTimer = pd.getCurrentTimeMilliseconds()
 
     titleSprite:setVisible(false)
@@ -64,19 +65,22 @@ local function startCountdown()
     ComboSystem.setLevel(1)
     ComboSystem.resetGame()
     TripOverview.reset()
-
+    Sound.playStart()
+    
     -- Reset level timer
     timeRemaining = Level1.time
+    
 end   
 
 local function startGame()
     gameStarted = true
     countdownActive = false
+    Sound.playBGM()
 
     -- Timer starts AFTER countdown
     levelStartTime = pd.getCurrentTimeMilliseconds()
-
     timeRemaining = Level1.time
+    
 end
 
 local function updateCountdown()
@@ -290,8 +294,11 @@ function pd.update()
     Train.update()
     Background.update()
     Obstacle.update()
+    Sound.update()
 
     if ComboSystem.update() then
+
+        Sound.playExplosion()
         Obstacle.destroy()
 
         if checkLevelComplete() then
@@ -303,6 +310,8 @@ function pd.update()
 
     -- COLLISION
     if Obstacle.checkCollision(Train.getSprite()) then
+
+        Sound.playExplosion()
         Train.penalize()
         Obstacle.destroy()
 
