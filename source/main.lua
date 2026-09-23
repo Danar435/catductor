@@ -5,9 +5,10 @@ import "background"
 import "train"
 import "obstacle"
 import "combo"
-import "level1"
+import "levels"
 import "overview"
 import "sound"
+import "menu"
 
 local pd = playdate
 local gfx = pd.graphics
@@ -37,7 +38,7 @@ local countdownGoDuration = 700
 
 --LEVEL TIMER
 local levelStartTime = 0
-local timeRemaining = Level1.time
+local timeRemaining = 0
 
 --LEVEL FINISH
 local function finishLevel(result)
@@ -68,7 +69,7 @@ local function startCountdown()
     Sound.playStart()
     
     -- Reset level timer
-    timeRemaining = Level1.time
+    timeRemaining = Level.current().time
     
 end   
 
@@ -79,7 +80,7 @@ local function startGame()
 
     -- Timer starts AFTER countdown
     levelStartTime = pd.getCurrentTimeMilliseconds()
-    timeRemaining = Level1.time
+    timeRemaining = Level.current().time
     
 end
 
@@ -115,7 +116,7 @@ local function updateLevelTimer()
 
     local elapsed = (currentTime - levelStartTime) / 1000
 
-    timeRemaining = Level1.time - elapsed
+    timeRemaining = Level.current().time - elapsed
 
     if timeRemaining <= 0 then
 
@@ -243,14 +244,7 @@ function pd.update()
     -- START SCREEN
     if not gameStarted and not countdownActive then
 
-        gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
-        gfx.drawTextAligned(
-            "Press A to Start",
-            200,
-            200,
-            kTextAlignment.center
-        )
-        gfx.setImageDrawMode(gfx.kDrawModeCopy)
+        Menu.levelSelect()
 
         if pd.buttonJustPressed(pd.kButtonA) then
             startCountdown()

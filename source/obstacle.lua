@@ -61,7 +61,7 @@ function Obstacle.reset()
 
     local obstacleDistanceSum = 0
 
-    for i, obstacleDistance in ipairs(Level1.obstacles) do
+    for i, obstacleDistance in ipairs(Level.current().obstacles) do
 
         obstacleDistanceSum += obstacleDistance * 100
 

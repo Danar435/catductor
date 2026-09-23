@@ -22,7 +22,7 @@ end
 
 function TripOverview.draw()
 
-    local multiplier = Level1.distance / lineLength
+    local multiplier = Level.current().distance / lineLength
     local obstaclePos = lineXpos
 
     -- Line
@@ -32,7 +32,7 @@ function TripOverview.draw()
     gfx.drawLine(lineXpos, lineYpos+9, lineXpos + lineLength, lineYpos+9)
 
     -- Obstacles
-    for i, obstacleDistance in ipairs(Level1.obstacles) do
+    for i, obstacleDistance in ipairs(Level.current().obstacles) do
         obstaclePos += obstacleDistance / multiplier
 
         if (i >= Obstacle.getNextID()) then
