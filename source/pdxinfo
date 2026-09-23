@@ -1,6 +1,7 @@
-name=Catductor
+name=Kitty Choo Choo
 author=Alex, Josh, Kristiyan, Pola
 description=A Cat Conducting Game
 bundleID=cc.kristiyan.catductor
 version=1.0.0
 buildNumber=1
+imagePath=path/to/launcher/
