@@ -46,9 +46,6 @@ local staticY = 110
 
 
 function Background.init()
-
-    gfx.setBackgroundColor(gfx.kColorBlack)
-    
     topSprite1:moveTo(topWidth / 2, topY)
     topSprite2:moveTo(topWidth + topWidth / 2, topY)
 
