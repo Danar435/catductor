@@ -7,7 +7,7 @@ Background = {}
 
 local topImage = gfx.image.new("images/background-top")
 local middleImage = gfx.image.new("images/background-middle")
-local bottomImage = gfx.image.new("images/background-bottom-placeholder")
+local bottomImage = gfx.image.new("images/background-bottom")
 
 local topWidth, topHeight = topImage:getSize()
 local middleWidth, middleHeight = middleImage:getSize()
@@ -33,7 +33,7 @@ bottomSprite2:setZIndex(80)
 
 local topY = 33
 local middleY = 136
-local bottomY = 150
+local bottomY = 136
 
 
 function Background.init()

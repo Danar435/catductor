@@ -6,6 +6,10 @@ local gfx = pd.graphics
 
 Train = {}
 
+-- SCREEN SHAKE
+local shakeTimer = 0
+local shakeDuration = 300
+local shakeStrength = 4
 
 -- TRAIN SPRITE
 local trainX = 65
@@ -90,7 +94,7 @@ local defaultSpeed = 3
 local trainSpeed = defaultSpeed
 
 local minSpeed = 1
-local maxSpeed = 20
+local maxSpeed = 15
 
 local acceleration = 0.005
 local brake = 0.0025
@@ -237,17 +241,17 @@ local function updateSpeed()
 
         if currentTime >= accelerationLockedUntil then
 
-            trainSpeed +=
-                crankChange * acceleration
+            -- the faster the train already goes = the easier it is to accelerate
+            local accelerationFactor = 0.3 + (trainSpeed / maxSpeed) * 0.7
 
+            trainSpeed += crankChange * acceleration * accelerationFactor
         end
 
 
     -- crank backward
     elseif crankChange < 0 then
 
-        trainSpeed +=
-            crankChange * brake
+        trainSpeed += crankChange * brake
 
     end
 
@@ -277,7 +281,7 @@ local function updateAnimation(crankChange)
         return
     end
 
-    animationDelay = math.floor(18 - trainSpeed * 2)
+    animationDelay = math.floor(18 - trainSpeed * 1.1)
 
     if animationDelay < 1 then
         animationDelay = 1
@@ -343,8 +347,38 @@ function Train.update()
         trainSprite.x,
         trainSprite.y
     )
+
+    -- SCREEN SHAKE
+    if shakeTimer > 0 then
+        local shakeX = math.random(
+            -shakeStrength,
+            shakeStrength
+        )
+
+        local shakeY = math.random(
+            -shakeStrength,
+            shakeStrength
+        )
+
+        gfx.setDrawOffset(
+            shakeX,
+            shakeY
+        )
+
+        shakeTimer -= 16
+
+        if shakeTimer <= 0 then
+            shakeTimer = 0
+            gfx.setDrawOffset(0, 0)
+        end
+    else
+        gfx.setDrawOffset(0, 0)
+    end
 end
 
+function Train.startShake()
+    shakeTimer = shakeDuration
+end
 
 -- COLLISION PENALTY
 function Train.penalize()
