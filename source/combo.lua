@@ -273,6 +273,7 @@ function ComboSystem.update()
 
     if input == expectedButton then
 
+        Sound.playCombo(ComboProgress)
         ComboProgress += 1
 
         -- COMBO COMPLETE
@@ -289,7 +290,8 @@ function ComboSystem.update()
     -- WRONG INPUT
 
     else
-
+        
+        Sound.playComboFail()
         ComboProgress = 1
 
     end
