@@ -1,409 +1,113 @@
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 
-local pd = playdate
-local gfx = pd.graphics
+import "train_speed"
+import "train_animation"
+
+local gfx = playdate.graphics
 
 Train = {}
 
--- SCREEN SHAKE
-local shakeTimer = 0
-local shakeDuration = 300
-local shakeStrength = 4
-
--- TRAIN SPRITE
+-- TRAIN
 local trainX = 65
 local trainY = 80
 
-local trainImages = {
-
-    gfx.image.new("images/train1"),
-    gfx.image.new("images/train2"),
-    gfx.image.new("images/train3"),
-    gfx.image.new("images/train4"),
-    gfx.image.new("images/train5"),
-    gfx.image.new("images/train6"),
-    gfx.image.new("images/train7"),
-    gfx.image.new("images/train8")
-}
-
-local trainSprite = gfx.sprite.new(trainImages[1])
-
-trainSprite:setCollideRect(
-    10,
-    4,
-    125,
-    125
-)
-
-trainSprite:moveTo(
-    trainX,
-    trainY
-)
-trainSprite:add()
-
+local trainSprite
 
 -- SPEED IMAGE
 local speedImages = {
-    gfx.image.new("images/speed1"),
-    gfx.image.new("images/speed2"),
-    gfx.image.new("images/speed3"),
-    gfx.image.new("images/speed4"),
-    gfx.image.new("images/speed5")
+    gfx.image.new("images/speed/speed1"),
+    gfx.image.new("images/speed/speed2"),
+    gfx.image.new("images/speed/speed3"),
+    gfx.image.new("images/speed/speed4"),
+    gfx.image.new("images/speed/speed5")
 }
 
-local speedSprite = gfx.sprite.new(speedImages[1])
-
-speedSprite:setZIndex(10)
-speedSprite:moveTo(
-    trainX,
-    trainY
-)
-
-speedSprite:add()
-
--- STEAM SPRITE
-local steamImages = {
-    gfx.image.new("images/steam1"),
-    gfx.image.new("images/steam2"),
-    gfx.image.new("images/steam3"),
-    gfx.image.new("images/steam4"),
-    gfx.image.new("images/steam5"),
-    gfx.image.new("images/steam6")
-}
-
-local steamSprite = gfx.sprite.new(steamImages[1])
-
-steamSprite:setZIndex(20)
-
-steamSprite:moveTo(
-    trainX,
-    trainY
-)
-
-steamSprite:add()
-
-steamSprite:setVisible(false) -- initially invisible
-
-local steamFrame = 1
-local steamTimer = 0
-local steamAnimationDelay = 8
-
--- SPEED
-local defaultSpeed = 3
-local trainSpeed = defaultSpeed
-
-local minSpeed = 1
-local maxSpeed = 15
-
-local acceleration = 0.005
-local brake = 0.0025
-local slowdown = 0.05
+local speedSprite
 
 
--- COLLISION PENALTY
-local accelerationLockedUntil = 0
-local accelerationLockDuration = 2000
+-- INIT
+function Train.init()
 
+    -- TRAIN
+    local trainImages = TrainAnimation.getTrainImages()
 
--- ANIMATION
-local animationTimer = 0
-local animationFrame = 1
-local animationDelay = 10
+    trainSprite = gfx.sprite.new(trainImages[1])
+    trainSprite:setCollideRect(10, 4, 125, 125)
+    trainSprite:moveTo(trainX, trainY)
+    trainSprite:add()
 
-local trainBounceUp = false
+    -- SPEED IMAGE
+    speedSprite = gfx.sprite.new(speedImages[1])
+    speedSprite:setZIndex(10)
+    speedSprite:moveTo(trainX, trainY)
+    speedSprite:add()
+end
+
 
 -- RESET
 function Train.reset()
 
-    trainSpeed = defaultSpeed
-    accelerationLockedUntil = 0
+    TrainSpeed.reset()
+    TrainAnimation.reset(trainSprite)
 
-    trainSprite:moveTo(
-        trainX,
-        trainY
-    )
-
-    speedSprite:moveTo(
-        trainX,
-        trainY
-    )
-
-    steamSprite:moveTo(
-        trainX,
-        trainY
-    )
-
-    animationFrame = 1
-    animationTimer = 0
-    trainBounceUp = false
-
-    trainSprite:setImage(
-        trainImages[animationFrame]
-    )
-
-    speedSprite:setImage(
-        speedImages[3]
-    )
-
-    steamSprite:setVisible(false)
-
-    steamFrame = 1
-    steamTimer = 0
-
-    steamSprite:setImage(
-        steamImages[1]
-    )
+    speedSprite:moveTo(trainX, trainY)
+    speedSprite:setImage(speedImages[3])
 end
 
--- SPEED IMAGE UPDATE
+-- SPEED IMAGE
 local function updateSpeedImage()
 
+    local speed = TrainSpeed.getSpeed()
     local speedImageIndex
 
-    if trainSpeed < 2 then
+    if speed < 3 then
         speedImageIndex = 1
 
-    elseif trainSpeed < 4 then
+    elseif speed < 6 then
         speedImageIndex = 2
 
-    elseif trainSpeed < 6 then
+    elseif speed < 9 then
         speedImageIndex = 3
 
-    elseif trainSpeed < 8 then
+    elseif speed < 12 then
         speedImageIndex = 4
 
     else
         speedImageIndex = 5
     end
 
-    speedSprite:setImage(
-        speedImages[speedImageIndex]
-    )
-end
-
-local function updateSteam(crankChange)
-
-    local currentTime =
-        pd.getCurrentTimeMilliseconds()
-
-    -- Steam only when:
-    -- - crank is moving forward
-    -- - acceleration is not locked
-
-    if crankChange > 0
-        and currentTime >= accelerationLockedUntil then
-
-        steamSprite:setVisible(true)
-
-        steamTimer += 1
-
-        if steamTimer >= steamAnimationDelay then
-
-            steamTimer = 0
-
-            steamFrame += 1
-
-            if steamFrame > #steamImages then
-                steamFrame = 1
-            end
-
-            steamSprite:setImage(
-                steamImages[steamFrame]
-            )
-        end
-
-    else
-
-        steamSprite:setVisible(false)
-
-        steamFrame = 1
-        steamTimer = 0
-
-        steamSprite:setImage(
-            steamImages[1]
-        )
-    end
-end
-
--- SPEED UPDATE
-local function updateSpeed()
-
-    local currentTime =
-        pd.getCurrentTimeMilliseconds()
-
-    local crankChange =
-        pd.getCrankChange()
-
-
-    -- crank forward
-    if crankChange > 0 then
-
-        if currentTime >= accelerationLockedUntil then
-
-            -- the faster the train already goes = the easier it is to accelerate
-            local accelerationFactor = 0.3 + (trainSpeed / maxSpeed) * 0.7
-
-            trainSpeed += crankChange * acceleration * accelerationFactor
-        end
-
-
-    -- crank backward
-    elseif crankChange < 0 then
-
-        trainSpeed += crankChange * brake
-
-    end
-
-
-    -- natural slowdown
-    trainSpeed -= slowdown
-
-
-    -- speed limits
-    if trainSpeed < minSpeed then
-        trainSpeed = minSpeed
-    end
-
-    if trainSpeed > maxSpeed then
-        trainSpeed = maxSpeed
-    end
-
-end
-
-
-
--- ANIMATION UPDATE
-local function updateAnimation(crankChange)
-
-    -- when turning the crank backwards = freeze the train animation
-    if crankChange < 0 then
-        return
-    end
-
-    animationDelay = math.floor(18 - trainSpeed * 1.1)
-
-    if animationDelay < 1 then
-        animationDelay = 1
-    end
-
-    if animationDelay > 18 then
-        animationDelay = 18
-    end
-
-    animationTimer += 1
-
-    if animationTimer >= animationDelay then
-
-        animationTimer = 0
-
-        -- next train animation frame
-        animationFrame += 1
-
-        if animationFrame > #trainImages then
-            animationFrame = 1
-        end
-
-        trainSprite:setImage(
-            trainImages[animationFrame]
-        )
-
-        -- train movement
-        if trainBounceUp then
-            trainSprite:moveTo(
-                trainX,
-                trainY
-            )
-
-            trainBounceUp = false
-        else
-            trainSprite:moveTo(
-                trainX,
-                trainY - 1
-            )
-
-            trainBounceUp = true
-        end
-    end
+    speedSprite:setImage(speedImages[speedImageIndex])
 end
 
 
 -- UPDATE
 function Train.update()
 
-    local crankChange = pd.getCrankChange()
-
-    updateSpeed()
-    updateAnimation(crankChange)
+    TrainSpeed.update()
+    TrainAnimation.updateAnimation(trainSprite)
     updateSpeedImage()
-    updateSteam(crankChange)
 
-    speedSprite:moveTo(
-        trainSprite.x,
-        trainSprite.y
-    )
+    TrainAnimation.updateSteam(trainSprite)
 
-    steamSprite:moveTo(
-        trainSprite.x,
-        trainSprite.y
-    )
+    TrainAnimation.updateShake()
 
-    -- SCREEN SHAKE
-    if shakeTimer > 0 then
-        local shakeX = math.random(
-            -shakeStrength,
-            shakeStrength
-        )
-
-        local shakeY = math.random(
-            -shakeStrength,
-            shakeStrength
-        )
-
-        gfx.setDrawOffset(
-            shakeX,
-            shakeY
-        )
-
-        shakeTimer -= 16
-
-        if shakeTimer <= 0 then
-            shakeTimer = 0
-            gfx.setDrawOffset(0, 0)
-        end
-    else
-        gfx.setDrawOffset(0, 0)
-    end
+    speedSprite:moveTo(trainSprite.x, trainSprite.y)
 end
 
-function Train.startShake()
-    shakeTimer = shakeDuration
-end
 
 -- COLLISION PENALTY
 function Train.penalize()
-
-    trainSpeed = minSpeed
-
-    local currentTime =
-        pd.getCurrentTimeMilliseconds()
-
-    accelerationLockedUntil =
-        currentTime + accelerationLockDuration
-
+    TrainSpeed.penalize()
+    TrainAnimation.startShake()
 end
 
 
-
 function Train.getSprite()
-
     return trainSprite
-
 end
 
 
 function Train.getSpeed()
-
-    return trainSpeed
-
+    return TrainSpeed.getSpeed()
 end

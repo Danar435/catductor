@@ -20,6 +20,7 @@ titleSprite:setZIndex(100)
 titleSprite:add()
 
 Background.init()
+Train.init()
 
 -- GAME STATES
 local gameStarted = false
@@ -141,7 +142,6 @@ function pd.update()
     -- COLLISION
     if Obstacle.checkCollision(Train.getSprite()) then
         Train.penalize()
-        Train.startShake()
         Obstacle.destroy()
         ComboSystem.failWall()
     end

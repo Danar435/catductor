@@ -8,10 +8,10 @@ Obstacle = {}
 
 -- OBSTACLE
 local obstacleImages = {
-    gfx.image.new("images/obstacle1"),
-    gfx.image.new("images/obstacle2"),
-    gfx.image.new("images/obstacle3"),
-    gfx.image.new("images/obstacle4")
+    gfx.image.new("images/obstacle/obstacle1"),
+    gfx.image.new("images/obstacle/obstacle2"),
+    gfx.image.new("images/obstacle/obstacle3"),
+    gfx.image.new("images/obstacle/obstacle4")
 }
 
 local obstacleSprite = {}
@@ -27,18 +27,18 @@ local obstacleAnimationDelay = 6
 
 -- EXPLOSION
 local explosionImages = {
-    gfx.image.new("images/explosion1"),
-    gfx.image.new("images/explosion2"),
-    gfx.image.new("images/explosion3"),
-    gfx.image.new("images/explosion4"),
-    gfx.image.new("images/explosion5"),
-    gfx.image.new("images/explosion6"),
-    gfx.image.new("images/explosion7"),
-    gfx.image.new("images/explosion8"),
-    gfx.image.new("images/explosion9"),
-    gfx.image.new("images/explosion10"),
-    gfx.image.new("images/explosion11"),
-    gfx.image.new("images/explosion12")
+    gfx.image.new("images/explosion/explosion1"),
+    gfx.image.new("images/explosion/explosion2"),
+    gfx.image.new("images/explosion/explosion3"),
+    gfx.image.new("images/explosion/explosion4"),
+    gfx.image.new("images/explosion/explosion5"),
+    gfx.image.new("images/explosion/explosion6"),
+    gfx.image.new("images/explosion/explosion7"),
+    gfx.image.new("images/explosion/explosion8"),
+    gfx.image.new("images/explosion/explosion9"),
+    gfx.image.new("images/explosion/explosion10"),
+    gfx.image.new("images/explosion/explosion11"),
+    gfx.image.new("images/explosion/explosion12")
 }
 
 local explosionSprite =
