@@ -5,16 +5,24 @@ local currentLevel = nil
 
 Level = {
     [1] = {
+        combo = { "A", "B" },
         obstacles = { 20, 30, 5, 5, 10, 10, 30, 5 },
         time = 90,
     },
     [2] = {
+        combo = { "UP", "DOWN", "LEFT", "RIGHT" },
         obstacles = { 20, 10, 10, 20, 5, 5, 5, 10, 10, 30, 5, 10, 5 },
         time = 120,
     },
     [3] = {
+        combo = { "A", "B", "UP", "DOWN", "LEFT", "RIGHT" },
         obstacles = { 20, 5, 5, 10, 10, 5, 10, 20, 10, 5, 10, 15, 15, 5, 5, 20, 10, 5 },
         time = 160,
+    },
+    [4] = {
+        combo = { "A" },
+        obstacles = { 20, 10, 5 },
+        time = 30,
     }
 }
 
@@ -26,6 +34,7 @@ for i, level in ipairs(Level) do
         sum = sum + obstacle
     end
     level.distance = sum
+    level.id = i
 end
 
 -- Setters and getters

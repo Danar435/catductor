@@ -7,6 +7,7 @@ Obstacle = {}
 
 
 -- OBSTACLE
+local goalImage = gfx.image.new("images/obstacle/goal")
 local obstacleImages = {
     gfx.image.new("images/obstacle/obstacle1"),
     gfx.image.new("images/obstacle/obstacle2"),
@@ -66,8 +67,8 @@ function Obstacle.reset()
         obstacleDistanceSum += obstacleDistance * 100
 
         local obstacle = gfx.sprite.new(
-            obstacleImages[1]
-        )
+                obstacleImages[1]
+            )
 
         obstacle.collisionResponse =
             gfx.sprite.kCollisionTypeOverlap
@@ -137,6 +138,10 @@ function Obstacle.update()
                 obstacleImages[obstacleAnimationFrame]
             )
 
+            -- Set last obstacle as goal instead
+            if i == #obstacleSprite then
+                obstacle:setImage(goalImage)
+            end 
         end
     end
 

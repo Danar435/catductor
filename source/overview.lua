@@ -12,6 +12,7 @@ local trainPos = lineXpos
 
 local catIcon = gfx.image.new("images/overview/cat-icon")
 local mouseIcon = gfx.image.new("images/overview/mouse-icon")
+local goalIcon = gfx.image.new("images/overview/goal-icon")
 local clockIcon = gfx.image.new("images/overview/clock-icon")
 
 function TripOverview.reset()
@@ -35,11 +36,16 @@ function TripOverview.draw()
     for i, obstacleDistance in ipairs(Level.current().obstacles) do
         obstaclePos += obstacleDistance / multiplier
 
-        if (i >= Obstacle.getNextID()) then
+        -- Set last obstacle as goal instead
+        if i == #Level.current().obstacles then
 
-            --gfx.drawLine(obstaclePos, 3, obstaclePos, 16)
+            goalIcon:draw(obstaclePos - goalIcon.width / 2, lineYpos - goalIcon.height / 2)
+            
+        -- Only draw alive mice
+        elseif (i >= Obstacle.getNextID()) then
+
             mouseIcon:draw(obstaclePos - mouseIcon.width / 2, lineYpos - mouseIcon.height / 2)
-        
+
         end
     end
 
