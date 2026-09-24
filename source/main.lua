@@ -330,13 +330,15 @@ function pd.update()
     -- UI
     TripOverview.draw()
 
+    --TIMER
+    gfx.setImageDrawMode(gfx.kDrawModeCopy)
+    local clockIcon = TripOverview.getClockIcon()
+    clockIcon:draw(0, 190)
     gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
 
-    --TIMER
     gfx.drawText(
-        "Time: "
-        .. string.format("%.1f", timeRemaining),
-        10,
+        string.format("%.1f s", timeRemaining),
+        33,
         200
     )
 
@@ -352,8 +354,13 @@ function pd.update()
             kTextAlignment.center
         )
 
+        gfx.setImageDrawMode(gfx.kDrawModeCopy)
+        local mouseIcon = TripOverview.getMouseIcon()
+        mouseIcon:draw(308, 190)
+        gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+
         gfx.drawTextAligned(
-            string.format("%d", Obstacle.getDistance()),
+            string.format("%d m", Obstacle.getDistance()),
             390,
             200,
             kTextAlignment.right
