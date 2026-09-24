@@ -12,6 +12,7 @@ local trainPos = lineXpos
 
 local catIcon = gfx.image.new("images/overview/cat-icon")
 local mouseIcon = gfx.image.new("images/overview/mouse-icon")
+local clockIcon = gfx.image.new("images/overview/clock-icon")
 
 function TripOverview.reset()
 
@@ -25,6 +26,8 @@ function TripOverview.draw()
     local obstaclePos = lineXpos
 
     -- Line
+    gfx.setColor(gfx.kColorBlack)
+
     gfx.drawLine(lineXpos, lineYpos+7, lineXpos + lineLength, lineYpos+7)
     gfx.drawLine(lineXpos, lineYpos+9, lineXpos + lineLength, lineYpos+9)
 
@@ -46,3 +49,10 @@ function TripOverview.draw()
     catIcon:draw(trainPos - catIcon.width / 2, lineYpos - catIcon.height / 2)
 end
 
+function TripOverview.getMouseIcon()
+    return mouseIcon
+end
+
+function TripOverview.getClockIcon()
+    return clockIcon
+end

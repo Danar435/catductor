@@ -9,11 +9,13 @@ local topImage = gfx.image.new("images/background/background-top")
 local middleImage = gfx.image.new("images/background/background-middle")
 local bottomImage = gfx.image.new("images/background/background-bottom")
 local staticImage = gfx.image.new("images/background/background-static")
+local uiImage = gfx.image.new("images/background/background-ui")
 
 local topWidth, topHeight = topImage:getSize()
 local middleWidth, middleHeight = middleImage:getSize()
 local bottomWidth, bottomHeight = bottomImage:getSize()
 local staticWidth, staticHeight = staticImage:getSize()
+local uiWidth, uiHeight = uiImage:getSize()
 
 local topSprite1 = gfx.sprite.new(topImage)
 local topSprite2 = gfx.sprite.new(topImage)
@@ -25,14 +27,16 @@ local bottomSprite1 = gfx.sprite.new(bottomImage)
 local bottomSprite2 = gfx.sprite.new(bottomImage)
 
 local staticSprite = gfx.sprite.new(staticImage)
+local uiSprite = gfx.sprite.new(uiImage)
 
-staticSprite:setZIndex(-100)
+uiSprite:setZIndex(-100)
+staticSprite:setZIndex(-90)
 
-topSprite1:setZIndex(-90)
-topSprite2:setZIndex(-90)
+topSprite1:setZIndex(-80)
+topSprite2:setZIndex(-80)
 
-middleSprite1:setZIndex(-80)
-middleSprite2:setZIndex(-80)
+middleSprite1:setZIndex(-70)
+middleSprite2:setZIndex(-70)
 
 bottomSprite1:setZIndex(80)
 bottomSprite2:setZIndex(80)
@@ -43,7 +47,7 @@ local topY = 33
 local middleY = 136
 local bottomY = 136
 local staticY = 110
-
+local uiY = 200
 
 function Background.init()
     topSprite1:moveTo(topWidth / 2, topY)
@@ -55,7 +59,9 @@ function Background.init()
     bottomSprite1:moveTo(bottomWidth / 2, bottomY)
     bottomSprite2:moveTo(bottomWidth + bottomWidth / 2, bottomY)
 
-    staticSprite:moveTo(staticWidth / 2, staticY)
+    uiSprite:moveTo(uiWidth / 2 - 50, uiY)
+
+    staticSprite:moveTo(staticWidth / 2 - 50, staticY)
 
     topSprite1:add()
     topSprite2:add()
@@ -67,6 +73,7 @@ function Background.init()
     bottomSprite2:add()
 
     staticSprite:add()
+    uiSprite:add()
 end
 
 
