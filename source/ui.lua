@@ -55,7 +55,7 @@ end
 
 function Ui.inGame()
 
-    if Obstacle.getDistance() > 0 then
+    if Obstacle.getDistance() > 0 or Obstacle.isGoal() then
 
         TripOverview.getClockIcon():draw(10, 195)
         TripOverview.getMouseIcon():draw(358, 195)

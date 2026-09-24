@@ -137,8 +137,13 @@ local function checkLevelComplete()
 
         if timeRemaining > 0 then
             finishLevel("win")
+            Sound.stopBGM()
+            Sound.playVictory()
         else
+            -- never seem to reach this part
             finishLevel("lose")
+            Sound.stopBGM()
+            Sound.playDefeat()
         end
 
         return true

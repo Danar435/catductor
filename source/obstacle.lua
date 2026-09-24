@@ -246,7 +246,13 @@ function Obstacle.getDistance()
     local x, y =
         obstacle:getPosition()
 
-    return math.floor(x) - 400
+    if Obstacle.isGoal() then
+        x -= 150
+    else 
+        x -= 400
+    end
+
+    return math.floor(x)
 
 end
 
