@@ -95,7 +95,7 @@ function Sound.playStart()
 end
 
 function Sound.playVictory()
-    snd.fileplayer.new("sounds/defeat-sound"):play()
+    snd.fileplayer.new("sounds/victory-sound"):play()
 end
 
 function Sound.playDefeat()

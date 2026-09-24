@@ -7,6 +7,12 @@ Obstacle = {}
 
 
 -- OBSTACLE
+local goalImages = {
+    gfx.image.new("images/goal/goal1"),
+    gfx.image.new("images/goal/goal2"),
+    gfx.image.new("images/goal/goal3"),
+    gfx.image.new("images/goal/goal4")
+}
 local obstacleImages = {
     gfx.image.new("images/obstacle/obstacle1"),
     gfx.image.new("images/obstacle/obstacle2"),
@@ -61,13 +67,13 @@ function Obstacle.reset()
 
     local obstacleDistanceSum = 0
 
-    for i, obstacleDistance in ipairs(Level1.obstacles) do
+    for i, obstacleDistance in ipairs(Level.current().obstacles) do
 
         obstacleDistanceSum += obstacleDistance * 100
 
         local obstacle = gfx.sprite.new(
-            obstacleImages[1]
-        )
+                obstacleImages[1]
+            )
 
         obstacle.collisionResponse =
             gfx.sprite.kCollisionTypeOverlap
@@ -137,6 +143,12 @@ function Obstacle.update()
                 obstacleImages[obstacleAnimationFrame]
             )
 
+            -- Set last obstacle as goal instead
+            if i == #obstacleSprite then
+                obstacle:setImage(
+                    goalImages[obstacleAnimationFrame]
+                )
+            end 
         end
     end
 
@@ -234,8 +246,21 @@ function Obstacle.getDistance()
     local x, y =
         obstacle:getPosition()
 
-    return math.floor(x) - 400
+    if Obstacle.isGoal() then
+        x -= 150
+    else 
+        x -= 400
+    end
 
+    return math.floor(x)
+
+end
+
+function Obstacle.isGoal()
+    if obstacleNext == #obstacleSprite then
+        return true
+    end
+    return false
 end
 
 -- LEVEL COMPLETE

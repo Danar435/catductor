@@ -5,9 +5,10 @@ import "background"
 import "train"
 import "obstacle"
 import "combo"
-import "level1"
+import "levels"
 import "overview"
 import "sound"
+import "ui"
 
 local pd = playdate
 local gfx = pd.graphics
@@ -37,7 +38,7 @@ local countdownGoDuration = 700
 
 --LEVEL TIMER
 local levelStartTime = 0
-local timeRemaining = Level1.time
+timeRemaining = 0 -- making this global for now, ideally should be a getter
 
 --LEVEL FINISH
 local function finishLevel(result)
@@ -62,13 +63,12 @@ local function startCountdown()
     Obstacle.reset()
 
     -- Level 1 uses D-pad combos
-    ComboSystem.setLevel(1)
     ComboSystem.resetGame()
     TripOverview.reset()
     Sound.playStart()
     
     -- Reset level timer
-    timeRemaining = Level1.time
+    timeRemaining = Level.current().time
     
 end   
 
@@ -79,7 +79,7 @@ local function startGame()
 
     -- Timer starts AFTER countdown
     levelStartTime = pd.getCurrentTimeMilliseconds()
-    timeRemaining = Level1.time
+    timeRemaining = Level.current().time
     
 end
 
@@ -115,7 +115,7 @@ local function updateLevelTimer()
 
     local elapsed = (currentTime - levelStartTime) / 1000
 
-    timeRemaining = Level1.time - elapsed
+    timeRemaining = Level.current().time - elapsed
 
     if timeRemaining <= 0 then
 
@@ -137,8 +137,13 @@ local function checkLevelComplete()
 
         if timeRemaining > 0 then
             finishLevel("win")
+            Sound.stopBGM()
+            Sound.playVictory()
         else
+            -- never seem to reach this part
             finishLevel("lose")
+            Sound.stopBGM()
+            Sound.playDefeat()
         end
 
         return true
@@ -198,6 +203,10 @@ function pd.update()
                 kTextAlignment.center
             )
 
+            if Level.current().score == nil 
+            or Level.current().score < timeRemaining then
+                Level.saveScore(timeRemaining)
+            end
 
             if pd.buttonJustPressed(pd.kButtonA) then
 
@@ -243,19 +252,9 @@ function pd.update()
     -- START SCREEN
     if not gameStarted and not countdownActive then
 
-        gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
-        gfx.drawTextAligned(
-            "Press A to Start",
-            200,
-            200,
-            kTextAlignment.center
-        )
-        gfx.setImageDrawMode(gfx.kDrawModeCopy)
-
-        if pd.buttonJustPressed(pd.kButtonA) then
+        if Ui.levelSelect() then
             startCountdown()
         end
-
         return
     end
 
@@ -321,59 +320,14 @@ function pd.update()
         Obstacle.destroy()
 
         if checkLevelComplete() then
-        return
-    end
+            return
+        end
 
         ComboSystem.failWall()
     end
 
     -- UI
     TripOverview.draw()
+    Ui.inGame()
 
-    --TIMER
-    gfx.setImageDrawMode(gfx.kDrawModeCopy)
-    local clockIcon = TripOverview.getClockIcon()
-    clockIcon:draw(0, 190)
-    gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
-
-    gfx.drawText(
-        string.format("%.1f s", timeRemaining),
-        33,
-        200
-    )
-
-    local obstacleDistance =
-    Obstacle.getDistance()
-
-    if obstacleDistance and obstacleDistance > 0 then
-
-        gfx.drawTextAligned(
-            "Speed: " .. string.format("%.1f", Train.getSpeed()),
-            200,
-            200,
-            kTextAlignment.center
-        )
-
-        gfx.setImageDrawMode(gfx.kDrawModeCopy)
-        local mouseIcon = TripOverview.getMouseIcon()
-        mouseIcon:draw(308, 190)
-        gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
-
-        gfx.drawTextAligned(
-            string.format("%d m", Obstacle.getDistance()),
-            390,
-            200,
-            kTextAlignment.right
-        )
-
-        -- return to normal mode before drawing images
-        gfx.setImageDrawMode(gfx.kDrawModeCopy)
-
-    elseif obstacleDistance then
-        gfx.setImageDrawMode(gfx.kDrawModeCopy)
-        ComboSystem.draw()
-
-    end
-
-    
 end
