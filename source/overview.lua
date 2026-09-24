@@ -39,7 +39,7 @@ function TripOverview.draw()
         -- Set last obstacle as goal instead
         if i == #Level.current().obstacles then
 
-            goalIcon:draw(obstaclePos - goalIcon.width / 2, lineYpos - goalIcon.height / 2)
+            goalIcon:draw(obstaclePos - goalIcon.width / 2 - 5, lineYpos - goalIcon.height / 2)
             
         -- Only draw alive mice
         elseif (i >= Obstacle.getNextID()) then

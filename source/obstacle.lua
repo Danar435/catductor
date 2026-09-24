@@ -7,7 +7,12 @@ Obstacle = {}
 
 
 -- OBSTACLE
-local goalImage = gfx.image.new("images/obstacle/goal")
+local goalImages = {
+    gfx.image.new("images/goal/goal1"),
+    gfx.image.new("images/goal/goal2"),
+    gfx.image.new("images/goal/goal3"),
+    gfx.image.new("images/goal/goal4")
+}
 local obstacleImages = {
     gfx.image.new("images/obstacle/obstacle1"),
     gfx.image.new("images/obstacle/obstacle2"),
@@ -140,7 +145,9 @@ function Obstacle.update()
 
             -- Set last obstacle as goal instead
             if i == #obstacleSprite then
-                obstacle:setImage(goalImage)
+                obstacle:setImage(
+                    goalImages[obstacleAnimationFrame]
+                )
             end 
         end
     end
