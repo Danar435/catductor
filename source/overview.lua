@@ -56,6 +56,9 @@ function TripOverview.draw()
 end
 
 function TripOverview.getMouseIcon()
+    if Obstacle.isGoal() then
+        return goalIcon
+    end
     return mouseIcon
 end
 

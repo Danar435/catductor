@@ -250,6 +250,13 @@ function Obstacle.getDistance()
 
 end
 
+function Obstacle.isGoal()
+    if obstacleNext == #obstacleSprite then
+        return true
+    end
+    return false
+end
+
 -- LEVEL COMPLETE
 function Obstacle.isLevelComplete()
 
