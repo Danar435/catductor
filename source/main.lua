@@ -203,6 +203,10 @@ function pd.update()
                 kTextAlignment.center
             )
 
+            if Level.current().score == nil 
+            or Level.current().score < timeRemaining then
+                Level.saveScore(timeRemaining)
+            end
 
             if pd.buttonJustPressed(pd.kButtonA) then
 

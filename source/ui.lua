@@ -41,12 +41,23 @@ function Ui.levelSelect()
             kTextAlignment.left
         )
 
-    gfx.drawTextAligned(
-            string.format("Best: %d sec", 10),
-            390,
-            205,
-            kTextAlignment.right
-        )
+    local score = Level[lvl].score
+    if score ~= nil then
+        gfx.drawTextAligned(
+                string.format("Best: %.1f sec", score),
+                390,
+                205,
+                kTextAlignment.right
+            )
+    else
+        gfx.drawTextAligned(
+                string.format("No time"),
+                390,
+                205,
+                kTextAlignment.right
+            )
+    end
+
         
     gfx.setImageDrawMode(gfx.kDrawModeCopy)
 

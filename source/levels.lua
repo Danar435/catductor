@@ -1,5 +1,7 @@
+local pd = playdate
 
 local currentLevel = nil
+local scores = pd.datastore.read()
 
 -- Very easily modifiable very nice
 
@@ -28,6 +30,11 @@ Level = {
 
 -- Don't worry about this
 
+if scores == nil then
+    scores = {}
+    pd.datastore.write(scores)
+end
+
 for i, level in ipairs(Level) do
     local sum = 0
     for j, obstacle in pairs(level.obstacles) do
@@ -35,6 +42,7 @@ for i, level in ipairs(Level) do
     end
     level.distance = sum
     level.id = i
+    level.score = scores[i]
 end
 
 -- Setters and getters
@@ -45,4 +53,10 @@ end
 
 function Level.current()
     return Level[currentLevel]
+end
+
+function Level.saveScore(time)
+    Level[currentLevel].score = time
+    scores[currentLevel] = time
+    pd.datastore.write(scores)
 end
