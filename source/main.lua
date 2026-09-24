@@ -243,12 +243,14 @@ function pd.update()
     -- START SCREEN
     if not gameStarted and not countdownActive then
 
+        gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
         gfx.drawTextAligned(
             "Press A to Start",
             200,
             200,
             kTextAlignment.center
         )
+        gfx.setImageDrawMode(gfx.kDrawModeCopy)
 
         if pd.buttonJustPressed(pd.kButtonA) then
             startCountdown()
@@ -260,6 +262,7 @@ function pd.update()
     -- COUNTDOWN
     if countdownActive then
 
+        gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
         updateCountdown()
 
         if countdownNumber > 0 then
@@ -281,6 +284,8 @@ function pd.update()
             )
 
         end
+
+        gfx.setImageDrawMode(gfx.kDrawModeCopy)
 
         return
     end
@@ -325,6 +330,8 @@ function pd.update()
     -- UI
     TripOverview.draw()
 
+    gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+
     --TIMER
     gfx.drawText(
         "Time: "
@@ -352,9 +359,14 @@ function pd.update()
             kTextAlignment.right
         )
 
+        -- return to normal mode before drawing images
+        gfx.setImageDrawMode(gfx.kDrawModeCopy)
+
     elseif obstacleDistance then
-        
+        gfx.setImageDrawMode(gfx.kDrawModeCopy)
         ComboSystem.draw()
 
     end
+
+    
 end

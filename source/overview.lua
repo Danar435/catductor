@@ -25,6 +25,8 @@ function TripOverview.draw()
     local obstaclePos = lineXpos
 
     -- Line
+    gfx.setColor(gfx.kColorBlack)
+
     gfx.drawLine(lineXpos, lineYpos+7, lineXpos + lineLength, lineYpos+7)
     gfx.drawLine(lineXpos, lineYpos+9, lineXpos + lineLength, lineYpos+9)
 
