@@ -38,7 +38,7 @@ local countdownGoDuration = 700
 
 --LEVEL TIMER
 local levelStartTime = 0
-local timeRemaining = 0
+timeRemaining = 0 -- making this global for now, ideally should be a getter
 
 --LEVEL FINISH
 local function finishLevel(result)

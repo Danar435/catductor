@@ -24,6 +24,9 @@ function Ui.levelSelect()
     lvl = ((lvl - 1) % #Level) + 1
 
     -- Drawing
+
+    gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+
     gfx.drawTextAligned(
             string.format("Level %d", lvl),
             200,
@@ -44,6 +47,8 @@ function Ui.levelSelect()
             205,
             kTextAlignment.right
         )
+        
+    gfx.setImageDrawMode(gfx.kDrawModeCopy)
 
     return false
 end
@@ -52,10 +57,14 @@ function Ui.inGame()
 
     if Obstacle.getDistance() > 0 then
 
+        TripOverview.getClockIcon():draw(10, 195)
+        TripOverview.getMouseIcon():draw(358, 195)
+
+        gfx.setImageDrawMode(gfx.kDrawModeFillWhite)
+
         gfx.drawTextAligned(
-            "Time: ",
-            --.. string.format("%.1f", timeRemaining),
-            10,
+            string.format("%.1f sec", timeRemaining),
+            48,
             205,
             kTextAlignment.left
         )
@@ -68,11 +77,13 @@ function Ui.inGame()
         )
 
         gfx.drawTextAligned(
-            string.format("%d", Obstacle.getDistance()),
-            390,
+            string.format("%d m", Obstacle.getDistance()),
+            352,
             205,
             kTextAlignment.right
         )
+
+        gfx.setImageDrawMode(gfx.kDrawModeCopy)
 
     else
 
