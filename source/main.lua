@@ -315,7 +315,7 @@ function pd.update()
     -- COLLISION
     if Obstacle.checkCollision(Train.getSprite()) then
 
-        Sound.playExplosion()
+        Sound.playExplosionTrain()
         Train.penalize()
         Obstacle.destroy()
 
