@@ -4,4 +4,4 @@ description=A Cat Conducting Game
 bundleID=cc.kristiyan.catductor
 version=1.0.0
 buildNumber=1
-imagePath=source/launcher/
+imagePath=source/images/launcher/

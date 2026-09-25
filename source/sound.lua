@@ -22,6 +22,8 @@ local steam  = {
 local click  = snd.fileplayer.new("sounds/click")
 local bgm = snd.fileplayer.new("sounds/bgm")
 local explosion = snd.fileplayer.new("sounds/explosion")
+local explosionTrain= snd.fileplayer.new("sounds/explosion-train")
+
 
 local steamIndex = 2
 local steamIndexPrevious = 2
@@ -88,6 +90,10 @@ end
 
 function Sound.playExplosion()
     explosion:play()
+end
+
+function Sound.playExplosionTrain()
+    explosionTrain:play()
 end
 
 function Sound.playStart()
